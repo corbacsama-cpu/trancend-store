@@ -223,7 +223,7 @@ export async function getCategories(): Promise<Category[]> {
 // ─────────────────────────────────────────────────────────────
 export async function getProducts(categorySlug?: string): Promise<Product[]> {
   return pbFetch(
-    () => pb.collection("product").getFullList<Product>({
+    () => pb.collection("products").getFullList<Product>({
       filter: categorySlug ? `category="${categorySlug}"` : "",
       sort: "-created",
     }),
@@ -235,14 +235,14 @@ export async function getProducts(categorySlug?: string): Promise<Product[]> {
 
 export async function getProduct(id: string): Promise<Product | null> {
   return pbFetch(
-    () => pb.collection("product").getOne<Product>(id),
+    () => pb.collection("products").getOne<Product>(id),
     MOCK_PRODUCTS.find(p => p.id === id) ?? null
   );
 }
 
 export async function getFeaturedProducts(): Promise<Product[]> {
   return pbFetch(
-    () => pb.collection("product").getFullList<Product>({
+    () => pb.collection("products").getFullList<Product>({
       filter: "featured=true",
       sort: "-created",
     }),
@@ -260,7 +260,7 @@ export async function searchProducts(query: string): Promise<Product[]> {
   const q = query.trim();
 
   return pbFetch(
-    () => pb.collection("product").getFullList<Product>({
+    () => pb.collection("products").getFullList<Product>({
       filter: `name ~ "${q}" || description ~ "${q}" || category ~ "${q}"`,
       sort: "-created",
     }),
