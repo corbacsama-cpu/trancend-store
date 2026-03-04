@@ -39,12 +39,12 @@ export const [authReady,   setAuthReady]   = createSignal(false);
 
 if (typeof window !== "undefined") {
   pb.authStore.onChange(() => {
-    setCurrentUser(pb.authStore.isValid ? pb.authStore.model : null);
+    setCurrentUser(pb.authStore.isValid ? pb.authStore.record : null);
   }, true);
 
   pb.collection("users")
     .authRefresh()
-    .then(() => setCurrentUser(pb.authStore.model))
+    .then(() => setCurrentUser(pb.authStore.record))
     .catch(() => setCurrentUser(null))
     .finally(() => setAuthReady(true));
 } else {
@@ -192,14 +192,14 @@ export function getHeroSlideImageUrl(slide: HeroSlide): string {
 // ─────────────────────────────────────────────────────────────
 export async function loginWithEmail(email: string, password: string) {
   const auth = await pb.collection("users").authWithPassword(email, password);
-  setCurrentUser(pb.authStore.model);
+  setCurrentUser(pb.authStore.record);
   return auth;
 }
 
 export async function registerWithEmail(email: string, password: string, name: string) {
   await pb.collection("users").create({ email, password, passwordConfirm: password, name });
   const auth = await pb.collection("users").authWithPassword(email, password);
-  setCurrentUser(pb.authStore.model);
+  setCurrentUser(pb.authStore.record);
   return auth;
 }
 
@@ -292,7 +292,7 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
 export async function createOrder(items: CartItem[], total: number, shippingAddress: string): Promise<Order> {
   if (!pb.authStore.isValid) throw new Error("Non authentifié");
   return pb.collection("orders").create<Order>({
-    user: pb.authStore.model!.id,
+    user: pb.authStore.record!.id,
     items: JSON.stringify(items),
     total,
     status: "pending",
@@ -300,13 +300,13 @@ export async function createOrder(items: CartItem[], total: number, shippingAddr
   });
 }
 
-export async function getUserOrders(): Promise<Order[]> {
-  if (!pb.authStore.isValid) return [];
+export async function getUserOrders(userId: string): Promise<Order[]> {
   return pbFetch(
-    () => pb.collection("orders").getFullList<Order>({
-      filter: `user="${pb.authStore.model!.id}"`,
-      sort: "-created",
-    }),
+    () =>
+      pb.collection("orders").getFullList<Order>({
+        filter: `user="${userId}"`,
+        sort: "-created",
+      }),
     []
   );
 }
@@ -317,7 +317,7 @@ export async function getUserOrders(): Promise<Order[]> {
 export async function syncCartToPB(items: CartItem[]) {
   if (!pb.authStore.isValid) return;
   try {
-    const userId = pb.authStore.model!.id;
+    const userId = pb.authStore.record!.id;
     try {
       const existing = await pb.collection("carts").getFirstListItem(`user="${userId}"`);
       await pb.collection("carts").update(existing.id, { items: JSON.stringify(items) });
@@ -330,7 +330,7 @@ export async function syncCartToPB(items: CartItem[]) {
 export async function loadCartFromPB(): Promise<CartItem[]> {
   if (!pb.authStore.isValid) return [];
   try {
-    const userId = pb.authStore.model!.id;
+    const userId = pb.authStore.record!.id;
     const record = await pb.collection("carts").getFirstListItem(`user="${userId}"`);
     return typeof record.items === "string" ? JSON.parse(record.items) : (record.items ?? []);
   } catch { return []; }

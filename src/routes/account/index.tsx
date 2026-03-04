@@ -1,7 +1,7 @@
 import { Title } from "@solidjs/meta";
 import { A, useNavigate } from "@solidjs/router";
-import { createResource, For, Show, onMount } from "solid-js";
-import { currentUser, logout, getUserOrders, pb } from "~/lib/pocketbase";
+import { createEffect, createResource, For, Show } from "solid-js";
+import { authReady, currentUser, getUserOrders, logout } from "~/lib/pocketbase";
 
 function StatusBadge(props: { status: string }) {
   const colors: Record<string, string> = {
@@ -27,9 +27,15 @@ function StatusBadge(props: { status: string }) {
 
 export default function Account() {
   const navigate = useNavigate();
-  const [orders] = createResource(getUserOrders);
+  
 
-  onMount(() => {
+  const [orders] = createResource(
+    () => currentUser()?.id,
+    (id) => (id ? getUserOrders(id) : [])
+  );
+
+  createEffect(() => {
+    if (!authReady()) return;
     if (!currentUser()) navigate("/auth/login");
   });
 
@@ -42,7 +48,18 @@ export default function Account() {
 
   return (
     <>
+    
       <Title>Mon compte — TRÄNCËNÐ</Title>
+      
+      <Show when={authReady()} fallback={
+      <div class="shop-page">
+        <div class="container" style="padding:60px 0;text-align:center">
+          <div style="font-family:var(--font-mono);font-size:12px;color:var(--gray-4);letter-spacing:0.12em">
+            Chargement...
+          </div>
+        </div>
+      </div>
+    }>
       <div class="shop-page">
         <div class="container">
           <div class="shop-header" style="display:flex;align-items:flex-end;justify-content:space-between">
@@ -153,6 +170,7 @@ export default function Account() {
           </div>
         </div>
       </div>
+      </Show>
     </>
   );
 }

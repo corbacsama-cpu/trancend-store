@@ -82,7 +82,7 @@ export default function Footer() {
         </div>
 
         <div class="footer-bottom">
-          <span class="footer-copyright">©️ 2025 TRÄNCËNÐ — L'amour du dépassement.</span>
+          <span class="footer-copyright">©️ 2026 TRÄNCËNÐ — L'amour du dépassement.</span>
           <div class="footer-payments">
             <span class="payment-badge">VISA</span>
             <span class="payment-badge">MC</span>
