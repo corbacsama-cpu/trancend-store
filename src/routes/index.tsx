@@ -68,7 +68,7 @@ function HeroCarousel(props: { slides: HeroSlide[] }) {
 
       <div class="container hero-content" style="position:relative;z-index:4">
         <p class="hero-eyebrow">{slides()[current()]?.title || "Collection 2025"}</p>
-        <h1 class="hero-title">TRANS<br /><em>CEND</em></h1>
+        <h1 class="hero-title">TRÄN<br /><em>CËNÐ</em></h1>
         <p class="hero-subtitle">{slides()[current()]?.subtitle || "Vêtements pensés pour ceux qui refusent les limites."}</p>
         <A href={slides()[current()]?.cta_url || "/shop"} class="hero-cta">
           {slides()[current()]?.cta_label || "DÉCOUVRIR LA COLLECTION"}
