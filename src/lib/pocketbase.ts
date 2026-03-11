@@ -135,6 +135,7 @@ export type CartItem = {
 export type Order = {
   id: string;
   user: string;
+  currency: string;
   items: CartItem[];
   total: number;
   status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";

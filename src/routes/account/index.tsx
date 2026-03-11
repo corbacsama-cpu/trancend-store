@@ -46,6 +46,15 @@ export default function Account() {
 
   const user = () => currentUser();
 
+  function formatPrice(total: number, currency: string) {
+    const noSubunit = ["xaf", "jpy", "clp"]; // monnaies sans centimes
+    if (noSubunit.includes(currency.toLowerCase())) {
+      return total.toLocaleString("fr-FR");
+    } else {
+      return (total / 100).toLocaleString("fr-FR", { minimumFractionDigits: 2 });
+    }
+  }
+
   return (
     <>
     
@@ -147,14 +156,14 @@ export default function Account() {
                             </div>
                             <div style="display:flex;align-items:center;gap:16px">
                               <StatusBadge status={order.status} />
-                              <span style="font-family:var(--font-mono);font-size:14px;color:var(--accent)">{order.total?.toLocaleString("fr-FR")} €</span>
+                              <span style="font-family:var(--font-mono);font-size:14px;color:var(--accent)">{formatPrice(order.total, order.currency)} {order.currency?.toUpperCase() || "€"}</span>
                             </div>
                           </div>
                           <div style="display:flex;flex-direction:column;gap:8px;padding-top:16px;border-top:1px solid var(--gray-2)">
                             <For each={items}>
                               {(item: any) => (
                                 <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:11px;color:var(--gray-4)">
-                                  <span style="color:var(--white)">{item.product?.name} <span style="color:var(--gray-4)">× {item.quantity}</span></span>
+                                  <span style="color:var(--white)">{item.name} <span style="color:var(--gray-4)">× {item.quantity}</span></span>
                                   <span>Taille: {item.size}</span>
                                 </div>
                               )}

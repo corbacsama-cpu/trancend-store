@@ -9,7 +9,7 @@ const [cartSyncing, setCartSyncing] = createSignal(false);
 if (typeof window !== "undefined") {
   const stored = localStorage.getItem("trancend_cart");
   if (stored) {
-    try { setCart(JSON.parse(stored)); } catch {}
+    try { setCart(JSON.parse(stored)); } catch { }
   }
 
   createEffect(() => {
@@ -22,7 +22,7 @@ if (typeof window !== "undefined") {
   });
 }
 
-export { cart, cartOpen, setCartOpen, cartSyncing };
+export { cart, cartOpen, setCartOpen, cartSyncing, setCart };
 
 export async function mergeCartAfterLogin() {
   setCartSyncing(true);

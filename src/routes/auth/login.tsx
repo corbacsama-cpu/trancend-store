@@ -20,7 +20,8 @@ export default function Login() {
     try {
       await loginWithEmail(email(), password());
       await mergeCartAfterLogin();
-      navigate("/account");
+      const redirectTo = typeof searchParams.redirect === "string" ? searchParams.redirect : "/account";
+      navigate(redirectTo);
     } catch (err: any) {
       setError(err?.message || "Email ou mot de passe incorrect");
     } finally {
@@ -81,7 +82,7 @@ export default function Login() {
 
           <div class="auth-footer">
             <span>Pas encore de compte ?</span>
-            <A href="/auth/register" class="auth-link">Créer un compte →</A>
+            <A href={searchParams.redirect ? `/auth/register?redirect=${searchParams.redirect}` : "/auth/register"} class="auth-link">Créer un compte →</A>
           </div>
         </div>
       </div>

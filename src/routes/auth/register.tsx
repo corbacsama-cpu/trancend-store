@@ -1,11 +1,12 @@
 import { Title } from "@solidjs/meta";
-import { A, useNavigate } from "@solidjs/router";
+import { A, useNavigate, useSearchParams } from "@solidjs/router";
 import { createSignal } from "solid-js";
 import { registerWithEmail } from "~/lib/pocketbase";
 import { mergeCartAfterLogin } from "~/lib/cart";
 
 export default function Register() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [name, setName] = createSignal("");
   const [email, setEmail] = createSignal("");
   const [password, setPassword] = createSignal("");
@@ -22,7 +23,8 @@ export default function Register() {
     try {
       await registerWithEmail(email(), password(), name());
       await mergeCartAfterLogin();
-      navigate("/account");
+      const redirectTo = typeof searchParams.redirect === "string" ? searchParams.redirect : "/account";
+      navigate(redirectTo);
     } catch (err: any) {
       setError(err?.message || "Erreur lors de la création du compte");
     } finally {
@@ -69,7 +71,7 @@ export default function Register() {
 
           <div class="auth-footer">
             <span>Déjà un compte ?</span>
-            <A href="/auth/login" class="auth-link">Se connecter →</A>
+            <A href={searchParams.redirect ? `/auth/login?redirect=${searchParams.redirect}` : "/auth/login"} class="auth-link">Se connecter →</A>
           </div>
         </div>
       </div>
