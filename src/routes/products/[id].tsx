@@ -10,7 +10,7 @@ export default function ProductPage() {
 
   const { data: product, loading } = usePbDataKeyed(
     () => params.id,
-    (id) => getProduct(id),
+    (id) => getProduct(id!),
     null
   );
 

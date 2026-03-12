@@ -1,0 +1,244 @@
+/* product-detail.css */
+
+/* Container général */
+.product-page {
+    padding: 60px 0;
+    font-family: 'Inter', sans-serif;
+    color: var(--white);
+  }
+  
+  /* Breadcrumb */
+  .breadcrumb {
+    font-size: 12px;
+    color: var(--gray-4);
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+  
+  .breadcrumb span {
+    margin: 0 4px;
+  }
+  
+  /* Layout principal */
+  .product-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-top: 40px;
+  }
+  
+  @media (max-width: 600px) {
+    .product-layout {
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 20px;
+    }
+  }
+  
+  /* Gallery */
+  .product-gallery {
+    position: sticky;
+    top: 100px;
+  }
+  
+  .gallery-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 8px;
+  }
+  
+  .gallery-slide {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+  }
+  
+  .gallery-slide img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    cursor: zoom-in;
+  }
+  
+  .gallery-track::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Product info */
+  .product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .product-category {
+    text-transform: uppercase;
+    font-size: 12px;
+    color: var(--gray-4);
+  }
+  
+  .product-name {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+  }
+  
+  .product-price-display {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  
+  .product-description {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  /* Picker blocks (couleur / taille) */
+  .picker-block {
+    margin-top: 24px;
+  }
+  
+  .picker-label {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .color-swatches {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .color-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.2);
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .color-swatch.selected {
+    border: 2px solid var(--accent);
+  }
+  
+  .color-swatch .swatch-check {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 14px;
+    height: 14px;
+    stroke: var(--white);
+  }
+  
+  .sizes-grid {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .size-btn {
+    padding: 8px 12px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    cursor: pointer;
+    background: transparent;
+  }
+  
+  .size-btn.selected {
+    border-color: var(--accent);
+    background: var(--accent-dark);
+    color: var(--white);
+  }
+  
+  /* Add to cart */
+  .add-to-cart-btn {
+    margin-top: 24px;
+    padding: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--accent);
+    color: var(--white);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .add-to-cart-btn:disabled {
+    background-color: var(--gray-3);
+    cursor: not-allowed;
+  }
+  
+  @media (max-width: 900px) {
+    .add-to-cart-btn {
+      position: sticky;
+      bottom: 0;
+      width: 100%;
+      left: 0;
+      z-index: 99;
+    }
+  }
+  
+  /* Product details table */
+  .product-details-table {
+    margin-top: 40px;
+    font-size: 12px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  .product-details-title {
+    margin-top: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  
+  .product-details-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  
+  /* Lightbox */
+  .lightbox-overlay {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+  
+  .lightbox-img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+  }
+  
+  .lightbox-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    font-size: 24px;
+    background: transparent;
+    border: none;
+    color: var(--white);
+    cursor: pointer;
+  }
+  
+  .lightbox-counter {
+    position: absolute;
+    bottom: 24px;
+    font-size: 14px;
+    color: var(--white);
+  }

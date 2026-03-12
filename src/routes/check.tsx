@@ -99,7 +99,7 @@ export default function Checkout() {
                             <h1 class="page-title">COMMANDER</h1>
                         </div>
 
-                        <div style="display:grid;grid-template-columns:1fr 400px;gap:60px;align-items:start">
+                        <div class="checkout-grid">
                             {/* Form */}
                             <form onSubmit={handleOrder}>
                                 <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);margin-bottom:24px">
@@ -144,7 +144,7 @@ export default function Checkout() {
                             </form>
 
                             {/* Order summary */}
-                            <div style="position:sticky;top:calc(var(--nav-h) + 24px)">
+                            <div class="checkout-summary" style="position:sticky;top:calc(var(--nav-h) + 24px)">
                                 <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);margin-bottom:20px">
                                     RÉCAPITULATIF
                                 </div>

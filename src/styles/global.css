@@ -256,6 +256,51 @@ input, textarea {
   .hamburger { display: flex; }
 }
 
+.checkout-grid{
+  display:grid;
+  grid-template-columns:1fr 400px;
+  gap:60px;
+  align-items:start;
+}
+
+/* tablette */
+@media (max-width: 1024px){
+  .checkout-grid{
+    grid-template-columns:1fr 360px;
+    gap:40px;
+  }
+}
+
+/* mobile */
+@media (max-width: 768px){
+  .checkout-grid{
+    grid-template-columns:1fr;
+    gap:40px;
+  }
+
+  /* le résumé passe sous le formulaire */
+  .checkout-summary{
+    position:relative !important;
+    top:auto !important;
+  }
+}
+
+/* petits mobiles */
+@media (max-width: 480px){
+  .checkout-grid{
+    gap:32px;
+  }
+
+  .shop-header{
+    margin-bottom:24px;
+  }
+
+  .page-title{
+    font-size:22px;
+    letter-spacing:0.15em;
+  }
+}
+
 /* ── HERO — see bottom of file for carousel styles ── */
 .hero-bg {
   position: absolute;
@@ -826,16 +871,26 @@ input, textarea {
   align-items: start;
 }
 
-@media (max-width: 900px) {
-  .product-layout {
-    grid-template-columns: 1fr;
-    gap: 40px;
+@media (max-width:600px){
+
+  .product-layout{
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 20px;
   }
+
+  .product-gallery{
+    position:static;
+    top:auto;
+  }
+
+  .product-main-img{
+    margin-bottom:12px;
+  }
+
 }
 
-.product-gallery {
-  position: sticky;
-  top: calc(var(--nav-h) + 24px);
+.product-main-img{
+  max-height:80vh;
 }
 
 .product-main-img {
@@ -937,7 +992,19 @@ input, textarea {
   opacity: 0.4;
   cursor: not-allowed;
 }
+@media (max-width: 600px) {
 
+  .product-layout {
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 20px;
+  }
+
+  .product-gallery {
+    position: relative;
+    top: auto;
+  }
+
+}
 /* ── FOOTER ── */
 .footer {
   border-top: 1px solid var(--gray-2);
@@ -2036,4 +2103,12 @@ input, textarea {
   text-align: center;
   margin-bottom: 24px;
   line-height: 1.5;
+}
+@media (max-width:768px){
+
+  .product-main-img{
+    max-height:none;
+    height:auto;
+  }
+
 }
