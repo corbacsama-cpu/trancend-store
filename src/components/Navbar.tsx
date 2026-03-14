@@ -36,10 +36,7 @@ export default function Navbar() {
           <ul class="navbar-links">
             <li><A href="/" end>HOME</A></li>
             <li><A href="/shop">SHOP</A></li>
-            <li><A href="/shop?cat=tops">TOPS</A></li>
-            <li><A href="/shop?cat=bottoms">BOTTOMS</A></li>
-            <li><A href="/shop?cat=sets">SETS</A></li>
-            <li><A href="/shop?cat=accessories">ACCESSORIES</A></li>
+            
             <li><A href="/about">ABOUT</A></li>
           </ul>
 

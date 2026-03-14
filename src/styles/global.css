@@ -2112,3 +2112,120 @@ input, textarea {
   }
 
 }
+.brand-statement{
+  padding:120px 0;
+  background:var(--gray-1);
+  border-top:1px solid var(--gray-2);
+  }
+  
+  .brand-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:60px;
+  align-items:center;
+  }
+  
+  .brand-title{
+  font-family:var(--font-display);
+  font-size:clamp(40px,6vw,80px);
+  line-height:1;
+  margin-bottom:20px;
+  }
+  
+  .brand-description{
+  color:var(--gray-4);
+  max-width:420px;
+  line-height:1.8;
+  }
+  
+  .community-section{
+  padding:120px 0;
+  text-align:center;
+  }
+  
+  .community-title{
+  font-size:clamp(36px,5vw,70px);
+  font-family:var(--font-display);
+  margin-bottom:20px;
+  }
+  
+  .community-stats{
+  display:flex;
+  justify-content:center;
+  gap:80px;
+  margin-top:60px;
+  }
+  
+  .lookbook-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  height:500px;
+  }
+  
+  .lookbook-item{
+    position:relative;
+    overflow:hidden;
+    }
+    
+    .lookbook-item img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    }
+    
+    .lookbook-overlay{
+    position:absolute;
+    bottom:20px;
+    left:20px;
+    color:white;
+    font-family:var(--font-mono);
+    letter-spacing:0.2em;
+    }
+  
+  .lookbook-overlay{
+  position:absolute;
+  bottom:20px;
+  left:20px;
+  font-family:var(--font-mono);
+  letter-spacing:0.2em;
+  }
+  .wear-section{
+    padding:100px 0;
+    background:var(--gray-1);
+    border-top:1px solid var(--gray-2);
+    }
+    
+    .wear-subtitle{
+    text-align:center;
+    color:var(--gray-4);
+    margin-bottom:40px;
+    }
+    
+    .wear-subtitle span{
+    color:var(--accent);
+    margin-left:6px;
+    }
+    
+    .wear-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    }
+    
+    .wear-item{
+    position:relative;
+    overflow:hidden;
+    aspect-ratio:1/1;
+    background:#111;
+    }
+    
+    .wear-item img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:transform 0.4s ease;
+    }
+    
+    .wear-item:hover img{
+    transform:scale(1.05);
+    }
