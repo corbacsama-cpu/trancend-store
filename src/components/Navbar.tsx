@@ -91,11 +91,7 @@ export default function Navbar() {
       <div class={`mobile-menu ${menuOpen() ? "open" : ""}`}>
         <A href="/" onClick={() => setMenuOpen(false)}>HOME</A>
         <A href="/shop" onClick={() => setMenuOpen(false)}>SHOP</A>
-        <A href="/shop?cat=tops" onClick={() => setMenuOpen(false)}>TOPS</A>
-        <A href="/shop?cat=bottoms" onClick={() => setMenuOpen(false)}>BOTTOMS</A>
-        <A href="/shop?cat=sets" onClick={() => setMenuOpen(false)}>SETS</A>
-        <A href="/shop?cat=accessories" onClick={() => setMenuOpen(false)}>ACCESSORIES</A>
-        <A href="/shop?cat=upcycling" onClick={() => setMenuOpen(false)}>UPCYCLING</A>
+       
         <A href="/about" onClick={() => setMenuOpen(false)}>ABOUT</A>
         <A href="/contact" onClick={() => setMenuOpen(false)}>CONTACT</A>
         {/* Mobile auth links — always render both, toggle visibility client-side */}

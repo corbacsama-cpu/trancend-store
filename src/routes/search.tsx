@@ -34,7 +34,7 @@ export default function Search() {
       <Title>Recherche — TRÄNCËNÐ</Title>
       <div class="shop-page">
         <div class="container">
-          <div class="shop-header"><h1 class="page-title">RECHERCHE</h1></div>
+          <div class="shop-header"><h1 class="page-title"></h1></div>
 
           <form onSubmit={submit} style="display:flex;margin-bottom:48px;max-width:600px">
             <input

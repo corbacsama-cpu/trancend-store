@@ -1,14 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap');
 
 :root {
-  --black: #0a0a0a;
-  --white: #f5f4f0;
+  --black: #FAF7F0;
+  --white: #0a0a0a;
   --cream: #ede9df;
   --gray-1: #1a1a1a;
   --gray-2: #2a2a2a;
   --gray-3: #555;
   --gray-4: #999;
-  --accent: #A6B28B;
+  --accent: #D8D2C2;
   --accent-dark: #1C352D;
   --red: #c0392b;
   --font-display: 'Bebas Neue', sans-serif;
@@ -103,7 +103,7 @@ input, textarea {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(10, 10, 10, 0.92);
+  
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -2114,7 +2114,7 @@ input, textarea {
 }
 .brand-statement{
   padding:120px 0;
-  background:var(--gray-1);
+
   border-top:1px solid var(--gray-2);
   }
   
