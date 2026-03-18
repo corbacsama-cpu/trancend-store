@@ -1,8 +1,7 @@
 import { Title } from "@solidjs/meta";
-import { useSearchParams } from "@solidjs/router";
-import { For, Show, createEffect } from "solid-js";
-import ProductCard from "~/components/ProductCard";
-import { getProducts, getCategories, parseColors, MOCK_PRODUCTS, MOCK_CATEGORIES } from "~/lib/pocketbase";
+import { A, useSearchParams } from "@solidjs/router";
+import { For, Show } from "solid-js";
+import { getProducts, getCategories, getImageUrl, parseColors, MOCK_PRODUCTS, MOCK_CATEGORIES } from "~/lib/pocketbase";
 import { usePbData, usePbDataKeyed } from "~/lib/use-pb-resource";
 import { addToCart } from "~/lib/cart";
 
@@ -10,72 +9,169 @@ export default function Shop() {
   const [params, setParams] = useSearchParams();
   const activeCategory = () => params.cat || "";
 
-  const { data: products,   loading: productsLoading }   = usePbDataKeyed(activeCategory, (cat) => getProducts(cat || undefined), MOCK_PRODUCTS);
+  const { data: products, loading: productsLoading } = usePbDataKeyed(
+    activeCategory,
+    (cat) => getProducts(cat || undefined),
+    MOCK_PRODUCTS
+  );
   const { data: categories, loading: categoriesLoading } = usePbData(getCategories, MOCK_CATEGORIES);
 
   const allCategories = () => [
-    { label: "TOUS", slug: "" },
-    ...(categories()).map(c => ({ label: c.name, slug: c.slug })),
+    { label: "LAB", slug: "" },
+    ...(categories()).map(c => ({ label: c.name.toUpperCase(), slug: c.slug })),
+    { label: "PROCESS", slug: "process" },
+    { label: "STUDIO", slug: "studio" },
+    { label: "RESEARCH", slug: "research" },
   ];
 
   return (
     <>
-      <Title>Shop — TRÄNCËNÐ</Title>
-      <div class="shop-page">
-        <div class="container">
-          <div class="shop-header">
-            <h1 class="page-title">SHOP</h1>
-            <p class="page-subtitle">{activeCategory() ? activeCategory().toUpperCase() : "TOUTE LA COLLECTION"}</p>
+      <Title>Garments — TRÄNCËNÐ LAB</Title>
+
+      <div class="lab-shop-page">
+
+        {/* ── TOP HEADER BAR ── */}
+        <div class="lab-shop-topbar">
+          <span class="lab-shop-topbar-left">TRÄNCËNÐ LAB</span>
+          <span class="lab-shop-topbar-right">File No. TRCND-001</span>
+        </div>
+
+        <div class="lab-shop-inner">
+
+          {/* ── MASTHEAD ── */}
+          <div class="lab-shop-masthead">
+            <h1 class="lab-shop-title">TRÄNCËNÐ</h1>
+            <p class="lab-shop-sub1">Experimental Garment Studio</p>
+            <p class="lab-shop-sub2">Researching form, history, and identity.</p>
           </div>
 
-          {/* Category filters */}
-          <Show
-            when={!categoriesLoading()}
-            fallback={<div class="filter-bar"><div class="filter-btn active">TOUS</div></div>}
-          >
-            <div class="filter-bar">
-              <For each={allCategories()}>{cat =>
-                <button
-                  class={`filter-btn ${activeCategory() === cat.slug ? "active" : ""}`}
-                  onClick={() => setParams({ cat: cat.slug || undefined })}
-                >
-                  {cat.label}
-                </button>
-              }</For>
-            </div>
-          </Show>
+          {/* ── NAV TABS ── */}
+          <div class="lab-shop-nav">
+            <Show
+              when={!categoriesLoading()}
+              fallback={
+                <For each={["LAB", "GARMENTS", "PROCESS", "STUDIO", "RESEARCH"]}>
+                  {(label) => <span class="lab-shop-nav-item">{label}</span>}
+                </For>
+              }
+            >
+              <For each={allCategories()}>{(cat, i) => (
+                <>
+                  {i() > 0 && <span class="lab-shop-nav-sep">|</span>}
+                  <button
+                    class={`lab-shop-nav-item ${activeCategory() === cat.slug ? "active" : ""}`}
+                    onClick={() => setParams({ cat: cat.slug || undefined })}
+                  >
+                    {cat.label}
+                  </button>
+                </>
+              )}</For>
+            </Show>
+          </div>
 
-          {/* Products grid */}
+          {/* ── EXPERIMENT CARDS GRID ── */}
           <Show
             when={!productsLoading()}
             fallback={
-              <div class="loading-grid">
-                <For each={[1,2,3,4,5,6]}>{() => <div class="skeleton skeleton-card" />}</For>
+              <div class="lab-experiment-grid">
+                <For each={[1, 2, 3]}>{(_, i) => (
+                  <div class="lab-experiment-card">
+                    <div class="lab-experiment-num skeleton" style="height:20px;width:140px;margin-bottom:12px" />
+                    <div class="lab-experiment-img-wrap skeleton" />
+                    <div class="lab-experiment-body">
+                      <div class="skeleton" style="height:14px;width:70%;margin-bottom:8px" />
+                      <div class="skeleton" style="height:14px;width:50%" />
+                    </div>
+                  </div>
+                )}</For>
               </div>
             }
           >
             <Show
               when={products().length > 0}
               fallback={
-                <div style="text-align:center;padding:80px 0;font-family:var(--font-mono);font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray-4)">
-                  <div style="font-family:var(--font-display);font-size:60px;color:var(--gray-2);margin-bottom:16px">⬡</div>
-                  Aucun produit dans cette catégorie
+                <div class="lab-empty">
+                  <p>NO SPECIMENS FOUND IN THIS CATEGORY</p>
                 </div>
               }
             >
-              <div class="products-grid">
-                <For each={products()}>{product =>
-                  <ProductCard
-                    product={product}
-                    onQuickAdd={p => {
-                      const c = parseColors(p.colors)[0] ?? { name:"Défaut", hex:"#0a0a0a" };
-                      addToCart(p, c, p.sizes?.[0] || "UNIQUE");
-                    }}
-                  />
-                }</For>
+              <div class="lab-experiment-grid">
+                <For each={products()}>{(product, i) => {
+                  const imgUrl = getImageUrl(product);
+                  return (
+                    <div class="lab-experiment-card">
+                      {/* Card header */}
+                      <div class="lab-experiment-header">
+                        <span class="lab-experiment-num">
+                          EXPERIMENT {String(i() + 1).padStart(3, "0")}
+                        </span>
+                      </div>
+
+                      {/* Image */}
+                      <A href={`/products/${product.id}`} class="lab-experiment-img-wrap">
+                        <Show
+                          when={imgUrl}
+                          fallback={
+                            <div class="lab-experiment-img-placeholder">⬡</div>
+                          }
+                        >
+                          <img
+                            src={imgUrl}
+                            alt={product.name}
+                            class="lab-experiment-img"
+                            loading="lazy"
+                          />
+                        </Show>
+                        {/* Quick add overlay */}
+                        <div
+                          class="lab-experiment-overlay"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            const c = parseColors(product.colors)[0] ?? { name: "Défaut", hex: "#111" };
+                            addToCart(product, c, product.sizes?.[0] || "UNIQUE");
+                          }}
+                        >
+                          + ADD TO BAG
+                        </div>
+                      </A>
+
+                      {/* Specimen data */}
+                      <div class="lab-experiment-body">
+                        <div class="lab-experiment-row">
+                          <span class="lab-experiment-field">Specimen:</span>
+                          <span class="lab-experiment-val">{product.name}</span>
+                        </div>
+                        <Show when={product.category}>
+                          <div class="lab-experiment-row">
+                            <span class="lab-experiment-field">Material:</span>
+                            <span class="lab-experiment-val">{product.category}</span>
+                          </div>
+                        </Show>
+                        <div class="lab-experiment-row">
+                          <span class="lab-experiment-field">Edition:</span>
+                          <span class="lab-experiment-val">
+                            {product.featured ? "Limited" : "Collection"}
+                          </span>
+                        </div>
+                        <div class="lab-experiment-price-row">
+                          <span class="lab-experiment-price">
+                            {product.price.toLocaleString("fr-FR")} €
+                          </span>
+                          <A href={`/products/${product.id}`} class="lab-experiment-view">
+                            VIEW →
+                          </A>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }}</For>
               </div>
+
             </Show>
           </Show>
+
+         
+
         </div>
       </div>
     </>

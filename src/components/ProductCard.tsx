@@ -14,11 +14,7 @@ export default function ProductCard({ product, onQuickAdd }: Props) {
       <div class="product-card-img">
         <Show
           when={product.images?.length > 0}
-          fallback={
-            <div class="product-placeholder">
-              ⬡
-            </div>
-          }
+          fallback={<div class="product-placeholder">⬡</div>}
         >
           <img src={getImageUrl(product)} alt={product.name} loading="lazy" />
         </Show>

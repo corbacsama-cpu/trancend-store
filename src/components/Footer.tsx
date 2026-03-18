@@ -14,22 +14,32 @@ export default function Footer() {
 
   return (
     <footer class="footer">
-      <div class="container">
-        <div class="footer-grid">
-          <div>
+      {/* Top line rule */}
+      <div class="footer-rule" />
+
+      <div class="footer-container">
+        {/* Main grid */}
+        <div class="footer-main">
+
+          {/* Left: brand */}
+          <div class="footer-brand">
             <div class="footer-brand-name">TRÄNCËNÐ</div>
             <p class="footer-tagline">
-              L'amour du dépassement. Vêtements pensés pour ceux qui refusent les limites.
+              L'amour du dépassement.<br />
+              Vêtements pensés pour ceux qui refusent les limites.
             </p>
             <div class="footer-social">
               <a href="https://instagram.com/trancend.cg" target="_blank" rel="noopener">IG</a>
+              <span class="footer-social-dot">·</span>
               <a href="https://facebook.com/trancend.cg" target="_blank" rel="noopener">FB</a>
+              <span class="footer-social-dot">·</span>
               <a href="https://youtube.com" target="_blank" rel="noopener">YT</a>
             </div>
           </div>
 
-          <div>
-            <div class="footer-col-title">Navigation</div>
+          {/* Center: navigation */}
+          <div class="footer-col">
+            <div class="footer-col-title">NAVIGATION</div>
             <ul class="footer-links">
               <li><a href="/shop">Shop</a></li>
               <li><a href="/shop?cat=tops">Tops</a></li>
@@ -40,33 +50,29 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div>
-            <div class="footer-col-title">Informations</div>
+          {/* Center: info */}
+          <div class="footer-col">
+            <div class="footer-col-title">INFORMATIONS</div>
             <ul class="footer-links">
               <li><a href="/about">À propos</a></li>
               <li><a href="/contact">Contact</a></li>
-              <li><a href="/search">Recherche</a></li>
-              <li><a href="/policies/shipping">Shipping Policy</a></li>
+              <li><a href="/policies/shipping">Shipping</a></li>
               <li><a href="/policies/refund">Remboursement</a></li>
-              <li><a href="/policies/sales">Conditions de vente</a></li>
               <li><a href="/policies/legal">Mention légale</a></li>
-              <li><a href="/policies/privacy">Privacy Policy</a></li>
-              <li><a href="/policies/terms">Terms of Service</a></li>
-              <li><a href="/policies/contact-info">Contact Information</a></li>
+              <li><a href="/policies/privacy">Privacy</a></li>
             </ul>
           </div>
 
-          <div>
-            <div class="footer-col-title">Newsletter</div>
-            <p style="color:var(--gray-4);font-size:13px;line-height:1.6;margin-bottom:16px">
+          {/* Right: newsletter */}
+          <div class="footer-col footer-col--newsletter">
+            <div class="footer-col-title">NEWSLETTER</div>
+            <p class="footer-newsletter-desc">
               Nouveautés et promotions directement dans votre boîte.
             </p>
             {sent() ? (
-              <p style="font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase">
-                ✓ Inscription confirmée
-              </p>
+              <p class="footer-sent">✓ Inscription confirmée</p>
             ) : (
-              <form class="footer-newsletter" onSubmit={handleSubscribe}>
+              <form class="footer-newsletter-form" onSubmit={handleSubscribe}>
                 <input
                   class="footer-input"
                   type="email"
@@ -75,20 +81,30 @@ export default function Footer() {
                   onInput={(e) => setEmail(e.currentTarget.value)}
                   required
                 />
-                <button class="footer-newsletter-btn" type="submit">OK</button>
+                <button class="footer-newsletter-btn" type="submit">
+                  NEWSLETTER →
+                </button>
               </form>
             )}
           </div>
         </div>
 
+        {/* Bottom bar */}
         <div class="footer-bottom">
-          <span class="footer-copyright">©️ 2026 TRÄNCËNÐ — L'amour du dépassement.</span>
-          <div class="footer-payments">
-            <span class="payment-badge">STRIPE</span>
-            <span class="payment-badge">VISA</span>
-            <span class="payment-badge">MC</span>
-            <span class="payment-badge">PAYPAL</span>
-            <span class="payment-badge">APPLE PAY</span>
+          <span class="footer-copyright">© TRÄNCËNÐ LAB 2026</span>
+
+          <div class="footer-bottom-links">
+            <a href="/policies/shipping">SHIPPING</a>
+            <span>·</span>
+            <a href="/policies/refund">RETURNS</a>
+            <span>·</span>
+            <a href="/contact">CONTACT</a>
+          </div>
+
+          <div class="footer-barcode">
+            <span class="footer-barcode-lines">
+              {"| || ||| || | ||| || |".split("").map((c) => c)}
+            </span>
           </div>
         </div>
       </div>
