@@ -1668,10 +1668,19 @@ input, textarea { font-family: inherit; }
 .lab-experiment-header { padding: 12px 14px 10px; border-bottom: 1px solid #c8c3bb; }
 .lab-experiment-num { font-family: var(--font-mono); font-size: 10.5px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #1a1a18; }
 .lab-experiment-img-wrap {
-  display: block; position: relative; aspect-ratio: 4/3;
+  display: block; position: relative;
+  aspect-ratio: 3/4;
   overflow: hidden; background: #d8d3ca; margin: 10px 10px 0; flex-shrink: 0;
 }
-.lab-experiment-img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(20%); transition: filter 0.3s ease, transform 0.4s ease; }
+.lab-experiment-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  filter: grayscale(20%);
+  transition: filter 0.3s ease, transform 0.4s ease;
+}
 .lab-experiment-img-wrap:hover .lab-experiment-img { filter: grayscale(0%); transform: scale(1.03); }
 .lab-experiment-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 32px; color: #b0aba2; background: #d8d3ca; }
 .lab-experiment-overlay {
