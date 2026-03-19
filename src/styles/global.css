@@ -247,7 +247,7 @@ input, textarea { font-family: inherit; }
 }
 .lab-hero-grid {
   display: grid;
-  grid-template-columns: 340px 1fr 280px;
+  grid-template-columns: 600px 1fr 280px;
   flex: 1;
   margin-left: 36px;
 }
@@ -1198,11 +1198,33 @@ input, textarea { font-family: inherit; }
 }
 .filter-btn:hover { background: var(--surface); color: var(--ink); }
 .filter-btn.active { background: var(--ink); color: var(--bg); }
+/* Grille de recherche — outline au lieu de background+gap pour éviter les cellules vides grises */
+.search-results-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+.search-results-grid .product-card {
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+@media (max-width: 1100px) { .search-results-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 768px)  { .search-results-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px)  { .search-results-grid { grid-template-columns: 1fr 1fr; } }
+
+/* Grille produits standard */
 .products-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: var(--border);
+  gap: 0;
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
+}
+.products-grid .product-card {
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 .loading-grid {
   display: grid;
@@ -1660,19 +1682,34 @@ input, textarea { font-family: inherit; }
 .lab-shop-nav-item.active::after { content: ""; position: absolute; bottom: -1px; left: 20px; right: 20px; height: 2px; background: #1a1a18; }
 .lab-shop-nav-sep { color: #c8c3bb; font-size: 16px; user-select: none; flex-shrink: 0; }
 .lab-experiment-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
+
 .lab-experiment-card {
-  background: #ede8df; border: 1px solid #c8c3bb;
-  display: flex; flex-direction: column; position: relative;
+  background: #ede8df;
+  border: 1px solid #c8c3bb;
+  display: flex;
+  flex-direction: column;
+  position: relative;
   box-shadow: 2px 3px 0 #c0bbb2, 4px 5px 0 #d4cfc7;
+  min-width: 0; /* empêche le débordement dans la grille */
+  overflow: hidden;
 }
 .lab-experiment-header { padding: 12px 14px 10px; border-bottom: 1px solid #c8c3bb; }
 .lab-experiment-num { font-family: var(--font-mono); font-size: 10.5px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #1a1a18; }
+
 .lab-experiment-img-wrap {
-  display: block; position: relative;
+  display: block;
+  position: relative;
+  width: 100%;
   aspect-ratio: 3/4;
-  overflow: hidden; background: #d8d3ca; margin: 10px 10px 0; flex-shrink: 0;
+  overflow: hidden;
+  background: #d8d3ca;
+  margin: 10px 10px 0;
+  width: calc(100% - 20px); /* compense le margin gauche+droite */
+  flex-shrink: 0;
 }
 .lab-experiment-img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1682,7 +1719,7 @@ input, textarea { font-family: inherit; }
   transition: filter 0.3s ease, transform 0.4s ease;
 }
 .lab-experiment-img-wrap:hover .lab-experiment-img { filter: grayscale(0%); transform: scale(1.03); }
-.lab-experiment-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 32px; color: #b0aba2; background: #d8d3ca; }
+.lab-experiment-img-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 32px; color: #b0aba2; background: #d8d3ca; }
 .lab-experiment-overlay {
   position: absolute; inset: 0; background: rgba(26,26,24,0.82); color: #f2ede5;
   font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
@@ -1690,11 +1727,12 @@ input, textarea { font-family: inherit; }
   opacity: 0; transition: opacity 0.25s ease; cursor: pointer;
 }
 .lab-experiment-img-wrap:hover .lab-experiment-overlay { opacity: 1; }
-.lab-experiment-body { padding: 14px 14px 16px; display: flex; flex-direction: column; flex: 1; }
-.lab-experiment-row { display: flex; align-items: baseline; gap: 6px; padding: 7px 0; border-bottom: 1px solid #c8c3bb; }
+
+.lab-experiment-body { padding: 14px 14px 16px; display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.lab-experiment-row { display: flex; align-items: baseline; gap: 6px; padding: 7px 0; border-bottom: 1px solid #c8c3bb; min-width: 0; }
 .lab-experiment-row:last-of-type { border-bottom: none; }
 .lab-experiment-field { font-family: var(--font-body); font-size: 12px; font-weight: 500; color: #1a1a18; flex-shrink: 0; min-width: 64px; }
-.lab-experiment-val { font-family: var(--font-body); font-size: 12px; color: #444; }
+.lab-experiment-val { font-family: var(--font-body); font-size: 12px; color: #444; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .lab-experiment-price-row { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
 .lab-experiment-price { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: #1a1a18; }
 .lab-experiment-view { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: #1a1a18; border-bottom: 1px solid #1a1a18; padding-bottom: 1px; transition: opacity 0.2s; }
@@ -1720,6 +1758,7 @@ input, textarea { font-family: inherit; }
   .lab-grid-container { grid-template-columns: 220px 1fr 1fr; height: auto; min-height: 420px; }
   .lab-grid-details { display: none; }
   .products-grid { grid-template-columns: repeat(3, 1fr); }
+  .search-results-grid { grid-template-columns: repeat(3, 1fr); }
   .loading-grid { grid-template-columns: repeat(3, 1fr); }
   .checkout-grid { grid-template-columns: 1fr 360px; gap: 40px; }
 }
@@ -1769,6 +1808,7 @@ input, textarea { font-family: inherit; }
   .lab-products-section { padding: 48px 0; }
   .lab-products-grid { grid-template-columns: 1fr 1fr; }
   .products-grid { grid-template-columns: repeat(2, 1fr); }
+  .search-results-grid { grid-template-columns: repeat(2, 1fr); }
   .loading-grid { grid-template-columns: repeat(2, 1fr); }
   .categories-grid { grid-template-columns: 1fr 1fr; }
   .lab-categories-section { padding: 48px 0; }
@@ -1801,8 +1841,11 @@ input, textarea { font-family: inherit; }
   .lab-shop-nav-item { padding: 5px 12px; font-size: 9.5px; }
   .lab-experiment-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
   .lab-experiment-card { box-shadow: 1px 2px 0 #c0bbb2; }
-  .lab-experiment-img-wrap { margin: 8px 8px 0; }
+  .lab-experiment-img-wrap { margin: 8px 8px 0; width: calc(100% - 16px); }
   .lab-experiment-body { padding: 10px 10px 12px; }
+  .lab-experiment-field { min-width: 52px; font-size: 11px; }
+  .lab-experiment-val { font-size: 11px; }
+  .lab-experiment-price { font-size: 15px; }
   .lab-shop-bottombar { flex-direction: column; gap: 10px; text-align: center; padding: 14px 0; }
   .cart-drawer { width: 100vw; }
   .auth-card { padding: 36px 24px; }
@@ -1815,8 +1858,263 @@ input, textarea { font-family: inherit; }
   .products-grid { grid-template-columns: 1fr 1fr; }
   .categories-grid { grid-template-columns: 1fr 1fr; }
   .lab-experiment-grid { grid-template-columns: 1fr; gap: 14px; }
+  .lab-experiment-img-wrap { margin: 8px 0 0; width: 100%; }
   .lab-shop-view-btn { width: 100%; text-align: center; }
   .lab-brand-stat-grid { grid-template-columns: 1fr; gap: 1px; }
   .lab-brand-stat { padding: 16px 20px; flex-direction: row; justify-content: space-between; }
   .footer-social { flex-wrap: wrap; }
+}
+
+
+/* ════════════════════════════════════════
+   MOBILE HERO — plein écran, couleur navbar
+════════════════════════════════════════ */
+
+/* Utilitaires show/hide */
+.desktop-only { display: block; }
+.mobile-only  { display: none; }
+
+@media (max-width: 768px) {
+  .desktop-only { display: none; }
+  .mobile-only  { display: block; }
+}
+
+/* Navbar qui prend la teinte de l'image hero mobile */
+@media (max-width: 768px) {
+  .mobile-hero-active .navbar {
+    background: var(--mobile-hero-tint, var(--bg));
+    border-bottom-color: transparent;
+    transition: background 0.6s ease;
+  }
+  .mobile-hero-active .navbar-logo,
+  .mobile-hero-active .navbar-links a,
+  .mobile-hero-active .navbar-cart-btn,
+  .mobile-hero-active .navbar-icon-btn {
+    color: var(--mobile-hero-tint-text, var(--ink));
+    transition: color 0.6s ease;
+  }
+  .mobile-hero-active .hamburger span {
+    background: var(--mobile-hero-tint-text, var(--ink));
+    transition: background 0.6s ease;
+  }
+  .mobile-hero-active .announcement-bar {
+    background: var(--mobile-hero-tint, var(--ink));
+    color: var(--mobile-hero-tint-text, var(--bg));
+    transition: background 0.6s ease, color 0.6s ease;
+  }
+}
+
+/* Hero container */
+.mobile-hero {
+  position: relative;
+  width: 100%;
+  height: 100svh; /* plein écran viewport */
+  min-height: 600px;
+  overflow: hidden;
+  background: var(--surface-alt);
+}
+
+/* Image plein écran */
+.mobile-hero-img-wrap {
+  position: absolute;
+  inset: 0;
+}
+.mobile-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+.mobile-hero-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(160deg, #d8d4cc, #c0bdb5);
+}
+
+/* Gradient sombre en bas pour lisibilité du texte */
+.mobile-hero-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.0) 40%,
+    rgba(0,0,0,0.55) 100%
+  );
+}
+
+/* Nom produit — haut gauche */
+.mobile-hero-top {
+  position: absolute;
+  top: 24px;
+  left: 20px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.mobile-hero-product-name {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 6vw, 32px);
+  font-weight: 700;
+  font-style: italic;
+  color: #fff;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  text-shadow: 0 1px 12px rgba(0,0,0,0.4);
+}
+.mobile-hero-product-price {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: rgba(255,255,255,0.8);
+  text-shadow: 0 1px 8px rgba(0,0,0,0.3);
+}
+
+/* SHOP ALL + dots — bas */
+.mobile-hero-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: 28px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mobile-hero-shop-all {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #fff;
+  border-bottom: 1px solid rgba(255,255,255,0.6);
+  padding-bottom: 2px;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.3);
+  transition: opacity 0.2s;
+}
+.mobile-hero-shop-all:hover { opacity: 0.75; }
+
+/* Dots */
+.mobile-hero-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.mobile-hero-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.45);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.mobile-hero-dot.active {
+  background: #fff;
+  transform: scale(1.3);
+}
+
+
+/* ════════════════════════════════════════
+   LAB HERO TITLE COL — annotations manuscrites
+════════════════════════════════════════ */
+
+/* Réorganise la colonne titre en blocs séparés */
+.lab-hero-title-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px 32px 40px 20px;
+  border-right: 1px solid var(--border);
+  gap: 0;
+}
+
+.lab-hero-block {
+  padding: 0 0 0 0;
+}
+
+/* Règle horizontale entre les blocs */
+.lab-hero-h-rule {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+  margin: 12px 0;
+  flex-shrink: 0;
+}
+
+/* Bloc annotation cursive */
+.lab-hero-annotation-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 0;
+}
+
+/* Label mono au-dessus du SVG */
+.lab-hero-nav-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.lab-hero-nav-item-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink);
+  font-weight: 500;
+}
+.lab-hero-nav-arrow-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+}
+
+/* SVG manuscrit */
+.lab-hero-handwriting {
+  width: 100%;
+  max-width: 260px;
+  height: auto;
+  max-height: 90px;
+  display: block;
+  /* légère animation d'entrée */
+  animation: fadeInHandwriting 0.8s ease both;
+}
+
+@keyframes fadeInHandwriting {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Bloc CTA + scroll en bas */
+.lab-hero-cta-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+/* Ajustements taille pour laisser de la place aux annotations */
+.lab-hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+.lab-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 4.5vw, 72px);
+  font-weight: 700;
+  line-height: 1.0;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  margin-bottom: 0;
+  font-style: italic;
 }

@@ -31,7 +31,6 @@ export default function Search() {
       <Title>Recherche — TRÄNCËNÐ</Title>
       <div class="shop-page">
         <div class="container">
-        
 
           <form onSubmit={submit} style="display:flex;margin-bottom:48px;max-width:600px;background:var(--border);gap:1px">
             <input
@@ -65,7 +64,8 @@ export default function Search() {
           </Show>
 
           <Show when={results().length > 0 && !loading()}>
-            <div class="products-grid">
+            {/* grille sans cellules vides — border simulée avec outline sur chaque carte */}
+            <div class="search-results-grid">
               <For each={results()}>{p =>
                 <ProductCard product={p} onQuickAdd={p => {
                   const c = parseColors(p.colors)[0] ?? { name:"Défaut", hex:"#111" };

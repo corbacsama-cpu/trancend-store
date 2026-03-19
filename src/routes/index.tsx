@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta";
 import { A } from "@solidjs/router";
-import { For, Show, createSignal, onMount, onCleanup } from "solid-js";
+import { For, Show, createSignal, onMount, onCleanup, createEffect } from "solid-js";
 import ProductCard from "~/components/ProductCard";
 import {
   getFeaturedProducts,
@@ -15,24 +15,135 @@ import {
   MOCK_CATEGORIES,
   MOCK_HERO_SLIDES,
   type HeroSlide,
-  type Category,
   type Product,
 } from "~/lib/pocketbase";
 import { usePbData } from "~/lib/use-pb-resource";
 import { addToCart } from "~/lib/cart";
 
-const MARQUEE_ITEMS = [
-  "LIVRAISON INTERNATIONALE",
-  "—",
-  "NOUVEAUX DROPS",
-  "—",
-  "HANDCRAFTED IN CONGO",
-  "—",
-  "L'AMOUR DU DÉPASSEMENT",
-  "—",
-  "FREE RETURNS",
-  "—",
+// Safe image helper
+function getProductImages(p: Product): string[] {
+  try {
+    const urls = getAllImageUrls(p);
+    if (urls && urls.length > 0) return urls;
+  } catch (_) {}
+  const single = getImageUrl(p);
+  return single ? [single] : [];
+}
+
+const FALLBACK_SLIDES: HeroSlide[] = [
+  { id: "1", title: "Collection 2025", subtitle: "COTTON // HAND-DYED // LIMITED", cta_label: "DÉCOUVRIR", cta_url: "/shop", collectionId: "", images: [] },
 ];
+
+const MARQUEE_ITEMS = [
+  "LIVRAISON INTERNATIONALE", "—", "NOUVEAUX DROPS", "—",
+  "HANDCRAFTED IN CONGO", "—", "L'AMOUR DU DÉPASSEMENT", "—", "FREE RETURNS", "—",
+];
+
+// ── MOBILE HERO ────────────────────────────────────────────────
+// Image plein écran, nom produit en haut à gauche, SHOP ALL en bas
+// La couleur de fond de la navbar suit la teinte de l'image via CSS variable
+function MobileHero(props: { products: Product[]; loading: boolean }) {
+  const [idx, setIdx] = createSignal(0);
+  const product = () => props.products[idx()] ?? null;
+  const imgUrl = () => {
+    const p = product();
+    if (!p) return "";
+    const imgs = getProductImages(p);
+    return imgs[0] ?? "";
+  };
+
+  // Extrait la couleur dominante de l'image et l'applique à la navbar
+  let imgRef: HTMLImageElement | undefined;
+  let canvasRef: HTMLCanvasElement | undefined;
+
+  function extractColor(url: string) {
+    if (!url || typeof window === "undefined") return;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = url;
+    img.onload = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1;
+        canvas.height = 1;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+        ctx.drawImage(img, 0, 0, 1, 1);
+        const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+        // Applique la couleur à la navbar via CSS variable sur :root
+        document.documentElement.style.setProperty("--mobile-hero-tint", `rgb(${r},${g},${b})`);
+        document.documentElement.style.setProperty("--mobile-hero-tint-text",
+          (r * 0.299 + g * 0.587 + b * 0.114) > 128 ? "#111110" : "#f0ede8"
+        );
+        document.documentElement.classList.add("mobile-hero-active");
+      } catch (_) {}
+    };
+  }
+
+  onMount(() => {
+    createEffect(() => {
+      extractColor(imgUrl());
+    });
+  });
+
+  onCleanup(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.style.removeProperty("--mobile-hero-tint");
+      document.documentElement.style.removeProperty("--mobile-hero-tint-text");
+      document.documentElement.classList.remove("mobile-hero-active");
+    }
+  });
+
+  return (
+    <section class="mobile-hero">
+      {/* Image plein écran */}
+      <div class="mobile-hero-img-wrap">
+        <Show when={imgUrl()} fallback={<div class="mobile-hero-placeholder" />}>
+          <img
+            src={imgUrl()}
+            alt={product()?.name ?? ""}
+            class="mobile-hero-img"
+            loading="eager"
+          />
+        </Show>
+        {/* Gradient overlay bas */}
+        <div class="mobile-hero-gradient" />
+      </div>
+
+      {/* Nom produit — haut gauche */}
+      <div class="mobile-hero-top">
+        <Show when={product()}>
+          <span class="mobile-hero-product-name">{product()!.name}</span>
+          <Show when={product()!.price}>
+            <span class="mobile-hero-product-price">
+              {product()!.price.toLocaleString("fr-FR")} €
+            </span>
+          </Show>
+        </Show>
+      </div>
+
+      {/* SHOP ALL — bas */}
+      <div class="mobile-hero-bottom">
+        <A href="/shop" class="mobile-hero-shop-all">
+          SHOP ALL →
+        </A>
+        {/* Dots si plusieurs produits */}
+        <Show when={props.products.length > 1}>
+          <div class="mobile-hero-dots">
+            <For each={props.products.slice(0, 5)}>
+              {(_, i) => (
+                <button
+                  class={`mobile-hero-dot ${idx() === i() ? "active" : ""}`}
+                  onClick={() => setIdx(i())}
+                />
+              )}
+            </For>
+          </div>
+        </Show>
+      </div>
+    </section>
+  );
+}
 
 // ── HERO / LAB SPLASH ──────────────────────────────────────────
 function LabHero(props: { slides: HeroSlide[] }) {
@@ -41,7 +152,7 @@ function LabHero(props: { slides: HeroSlide[] }) {
   const [busy, setBusy] = createSignal(false);
   let timer: ReturnType<typeof setInterval>;
 
-  const slides = () => (props.slides.length > 0 ? props.slides : MOCK_HERO_SLIDES);
+  const slides = () => (props.slides.length > 0 ? props.slides : (MOCK_HERO_SLIDES ?? FALLBACK_SLIDES));
 
   function goTo(i: number) {
     if (busy() || i === current()) return;
@@ -70,18 +181,77 @@ function LabHero(props: { slides: HeroSlide[] }) {
 
         {/* Column 1: Title block */}
         <div class="lab-hero-title-col">
-          <p class="lab-hero-eyebrow">GARMENTS AS EXPERIMENTS</p>
-          <h1 class="lab-hero-title">TRÄNCËNÐ</h1>
+
+          {/* Bloc eyebrow + titre */}
+          <div class="lab-hero-block">
+            <p class="lab-hero-eyebrow">GARMENTS AS EXPERIMENTS</p>
+            <h1 class="lab-hero-title">TRÄNCËNÐ</h1>
+          </div>
+
+          {/* Séparateur horizontal */}
+          <div class="lab-hero-h-rule" />
+
+          {/* Annotation manuscrite "Home → LAB" */}
+          <div class="lab-hero-annotation-wrap">
+            <div class="lab-hero-nav-label">
+              <span class="lab-hero-nav-item-label">LAB</span>
+              <span class="lab-hero-nav-arrow-label">← accueil</span>
+            </div>
+            {/* SVG cursif "Home" avec flèche pointant vers LAB */}
+            <svg class="lab-hero-handwriting" viewBox="0 0 280 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Ellipse */}
+              <ellipse cx="130" cy="128" rx="105" ry="22" stroke="#c0392b" stroke-width="0.8" opacity="0.7"/>
+              {/* Flèche courbe vers le haut-gauche (vers LAB) */}
+              <path d="M 148 106 C 148 80, 120 50, 95 18" stroke="#c0392b" stroke-width="0.9" opacity="0.75" fill="none"/>
+              {/* Pointe de flèche */}
+              <path d="M 95 18 L 88 28 M 95 18 L 104 26" stroke="#c0392b" stroke-width="0.9" opacity="0.75" fill="none" stroke-linecap="round"/>
+              {/* Texte cursif "Home" */}
+              <text x="68" y="136" font-family="Georgia, serif" font-size="22" fill="#c0392b" opacity="0.75" font-style="italic" transform="rotate(-4, 130, 128)">Home</text>
+            </svg>
+          </div>
+
+          {/* Séparateur horizontal */}
+          <div class="lab-hero-h-rule" />
+
+          {/* Lignes de sous-titre */}
           <div class="lab-hero-subtitle-lines">
             <span>RESEARCH — FORM / TEXTURE / IDENTITY</span>
             <span>LIMITED EDITIONS</span>
           </div>
-          <A href="/shop" class="lab-hero-cta">
-            EXPLORE COLLECTION &nbsp;→
-          </A>
-          <div class="lab-hero-scroll">
-            SCROLL &nbsp;↓
+
+          {/* Séparateur horizontal */}
+          <div class="lab-hero-h-rule" />
+
+          {/* Annotation manuscrite "Shop → GARMENTS" */}
+          <div class="lab-hero-annotation-wrap">
+            <div class="lab-hero-nav-label">
+              <span class="lab-hero-nav-item-label">GARMENTS</span>
+              <span class="lab-hero-nav-arrow-label">← collection</span>
+            </div>
+            {/* SVG cursif "Shop" avec flèche pointant vers GARMENTS */}
+            <svg class="lab-hero-handwriting" viewBox="0 0 280 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Ellipse */}
+              <ellipse cx="148" cy="128" rx="105" ry="22" stroke="#c0392b" stroke-width="0.8" opacity="0.6"/>
+              {/* Flèche courbe vers le haut */}
+              <path d="M 170 106 C 175 75, 165 45, 148 16" stroke="#c0392b" stroke-width="0.9" opacity="0.65" fill="none"/>
+              {/* Pointe de flèche */}
+              <path d="M 148 16 L 140 27 M 148 16 L 157 25" stroke="#c0392b" stroke-width="0.9" opacity="0.65" fill="none" stroke-linecap="round"/>
+              {/* Texte cursif "Shop" */}
+              <text x="90" y="136" font-family="Georgia, serif" font-size="22" fill="#c0392b" opacity="0.65" font-style="italic" transform="rotate(-3, 148, 128)">Shop</text>
+            </svg>
           </div>
+
+          {/* Séparateur horizontal */}
+          <div class="lab-hero-h-rule" />
+
+          {/* CTA + Scroll */}
+          <div class="lab-hero-cta-block">
+            <A href="/shop" class="lab-hero-cta">
+              EXPLORE COLLECTION &nbsp;→
+            </A>
+            <div class="lab-hero-scroll">SCROLL &nbsp;↓</div>
+          </div>
+
         </div>
 
         {/* Column 2: Central hero image */}
@@ -181,7 +351,7 @@ function LabHero(props: { slides: HeroSlide[] }) {
 
 // ── LAB GRID SECTION ──────────────────────────────────────────
 // Replace with your actual YouTube video ID
-const YOUTUBE_VIDEO_ID = "g-06sDLT8is"; // ← change this to your video ID
+const YOUTUBE_VIDEO_ID = "dQw4w9WgXcQ"; // ← change this to your video ID
 
 function LabGrid(props: { products: Product[]; loading: boolean }) {
   const list = () => props.products.slice(0, 5);
@@ -194,7 +364,7 @@ function LabGrid(props: { products: Product[]; loading: boolean }) {
   const selectedImages = () => {
     const p = selected();
     if (!p) return [];
-    return getAllImageUrls(p);
+    return getProductImages(p);
   };
 
   // Active thumb in detail panel
@@ -402,22 +572,31 @@ function LabGrid(props: { products: Product[]; loading: boolean }) {
 
 // ── HOME PAGE ─────────────────────────────────────────────────
 export default function Home() {
-  const { data: slides, loading: slidesLoading } = usePbData(getHeroSlides, MOCK_HERO_SLIDES);
+  const { data: slides, loading: slidesLoading } = usePbData(getHeroSlides, MOCK_HERO_SLIDES ?? FALLBACK_SLIDES);
   const { data: featured, loading: featuredLoading } = usePbData(
     getFeaturedProducts,
-    MOCK_PRODUCTS.filter((p) => p.featured),
+    ( MOCK_PRODUCTS ?? [] ).filter((p) => p.featured),
   );
-  const { data: categories, loading: categoriesLoading } = usePbData(getCategories, MOCK_CATEGORIES);
+  const { data: categories, loading: categoriesLoading } = usePbData(getCategories, MOCK_CATEGORIES ?? []);
 
   return (
     <>
       <Title>TRÄNCËNÐ — L'amour du dépassement</Title>
 
-      {/* Lab hero splash */}
-      <LabHero slides={slides()} />
+      {/* Hero desktop */}
+      <div class="desktop-only">
+        <LabHero slides={slides()} />
+      </div>
 
-      {/* Lab grid: collection + notes + details */}
-      <LabGrid products={featured()} loading={featuredLoading()} />
+      {/* Hero mobile — image plein écran avec produit featured */}
+      <div class="mobile-only">
+        <MobileHero products={featured()} loading={featuredLoading()} />
+      </div>
+
+      {/* Lab grid: collection + notes + details — desktop uniquement */}
+      <div class="desktop-only">
+        <LabGrid products={featured()} loading={featuredLoading()} />
+      </div>
 
       {/* Marquee */}
       <div class="lab-marquee">
