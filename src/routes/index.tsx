@@ -1,13 +1,6 @@
 import { Title } from "@solidjs/meta";
 import { A } from "@solidjs/router";
-import {
-  For,
-  Show,
-  createSignal,
-  onMount,
-  onCleanup,
-  createEffect,
-} from "solid-js";
+import { For, Show, createSignal, onMount, onCleanup, createEffect } from "solid-js";
 import ProductCard from "~/components/ProductCard";
 import {
   getFeaturedProducts,
@@ -38,28 +31,12 @@ function getProductImages(p: Product): string[] {
 }
 
 const FALLBACK_SLIDES: HeroSlide[] = [
-  {
-    id: "1",
-    title: "Collection 2025",
-    subtitle: "COTTON // HAND-DYED // LIMITED",
-    cta_label: "DÉCOUVRIR",
-    cta_url: "/shop",
-    collectionId: "",
-    images: [],
-  },
+  { id: "1", title: "Collection 2025", subtitle: "COTTON // HAND-DYED // LIMITED", cta_label: "DÉCOUVRIR", cta_url: "/shop", collectionId: "", images: [] },
 ];
 
 const MARQUEE_ITEMS = [
-  "LIVRAISON INTERNATIONALE",
-  "—",
-  "NOUVEAUX DROPS",
-  "—",
-  "HANDCRAFTED IN CONGO",
-  "—",
-  "L'AMOUR DU DÉPASSEMENT",
-  "—",
-  "FREE RETURNS",
-  "—",
+  "LIVRAISON INTERNATIONALE", "—", "NOUVEAUX DROPS", "—",
+  "HANDCRAFTED IN CONGO", "—", "L'AMOUR DU DÉPASSEMENT", "—", "FREE RETURNS", "—",
 ];
 
 // ── MOBILE HERO ────────────────────────────────────────────────
@@ -94,13 +71,9 @@ function MobileHero(props: { products: Product[]; loading: boolean }) {
         ctx.drawImage(img, 0, 0, 1, 1);
         const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
         // Applique la couleur à la navbar via CSS variable sur :root
-        document.documentElement.style.setProperty(
-          "--mobile-hero-tint",
-          `rgb(${r},${g},${b})`,
-        );
-        document.documentElement.style.setProperty(
-          "--mobile-hero-tint-text",
-          r * 0.299 + g * 0.587 + b * 0.114 > 128 ? "#111110" : "#f0ede8",
+        document.documentElement.style.setProperty("--mobile-hero-tint", `rgb(${r},${g},${b})`);
+        document.documentElement.style.setProperty("--mobile-hero-tint-text",
+          (r * 0.299 + g * 0.587 + b * 0.114) > 128 ? "#111110" : "#f0ede8"
         );
         document.documentElement.classList.add("mobile-hero-active");
       } catch (_) {}
@@ -125,10 +98,7 @@ function MobileHero(props: { products: Product[]; loading: boolean }) {
     <section class="mobile-hero">
       {/* Image plein écran */}
       <div class="mobile-hero-img-wrap">
-        <Show
-          when={imgUrl()}
-          fallback={<div class="mobile-hero-placeholder" />}
-        >
+        <Show when={imgUrl()} fallback={<div class="mobile-hero-placeholder" />}>
           <img
             src={imgUrl()}
             alt={product()?.name ?? ""}
@@ -182,32 +152,21 @@ function LabHero(props: { slides: HeroSlide[] }) {
   const [busy, setBusy] = createSignal(false);
   let timer: ReturnType<typeof setInterval>;
 
-  const slides = () =>
-    props.slides.length > 0
-      ? props.slides
-      : (MOCK_HERO_SLIDES ?? FALLBACK_SLIDES);
+  const slides = () => (props.slides.length > 0 ? props.slides : (MOCK_HERO_SLIDES ?? FALLBACK_SLIDES));
 
   function goTo(i: number) {
     if (busy() || i === current()) return;
     setPrevIdx(current());
     setBusy(true);
     setCurrent(i);
-    setTimeout(() => {
-      setPrevIdx(-1);
-      setBusy(false);
-    }, 900);
+    setTimeout(() => { setPrevIdx(-1); setBusy(false); }, 900);
   }
   const next = () => goTo((current() + 1) % slides().length);
   const prev = () => goTo((current() - 1 + slides().length) % slides().length);
 
-  onMount(() => {
-    timer = setInterval(next, 5000);
-  });
+  onMount(() => { timer = setInterval(next, 5000); });
   onCleanup(() => clearInterval(timer));
-  const restart = () => {
-    clearInterval(timer);
-    timer = setInterval(next, 5000);
-  };
+  const restart = () => { clearInterval(timer); timer = setInterval(next, 5000); };
 
   return (
     <section class="lab-hero">
@@ -219,8 +178,10 @@ function LabHero(props: { slides: HeroSlide[] }) {
 
       {/* Main content grid */}
       <div class="lab-hero-grid">
+
         {/* Column 1: Title block */}
         <div class="lab-hero-title-col">
+
           {/* Bloc eyebrow + titre */}
           <div class="lab-hero-block">
             <p class="lab-hero-eyebrow">GARMENTS AS EXPERIMENTS</p>
@@ -237,52 +198,15 @@ function LabHero(props: { slides: HeroSlide[] }) {
               <span class="lab-hero-nav-arrow-label">← accueil</span>
             </div>
             {/* SVG cursif "Home" avec flèche pointant vers LAB */}
-            <svg
-              class="lab-hero-handwriting"
-              viewBox="0 0 280 160"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+            <svg class="lab-hero-handwriting" viewBox="0 0 280 160" fill="none" xmlns="http://www.w3.org/2000/svg">
               {/* Ellipse */}
-              <ellipse
-                cx="130"
-                cy="128"
-                rx="105"
-                ry="22"
-                stroke="#c0392b"
-                stroke-width="0.8"
-                opacity="0.7"
-              />
+              <ellipse cx="130" cy="128" rx="105" ry="22" stroke="#c0392b" stroke-width="0.8" opacity="0.7"/>
               {/* Flèche courbe vers le haut-gauche (vers LAB) */}
-              <path
-                d="M 148 106 C 148 80, 120 50, 95 18"
-                stroke="#c0392b"
-                stroke-width="0.9"
-                opacity="0.75"
-                fill="none"
-              />
+              <path d="M 148 106 C 148 80, 120 50, 95 18" stroke="#c0392b" stroke-width="0.9" opacity="0.75" fill="none"/>
               {/* Pointe de flèche */}
-              <path
-                d="M 95 18 L 88 28 M 95 18 L 104 26"
-                stroke="#c0392b"
-                stroke-width="0.9"
-                opacity="0.75"
-                fill="none"
-                stroke-linecap="round"
-              />
+              <path d="M 95 18 L 88 28 M 95 18 L 104 26" stroke="#c0392b" stroke-width="0.9" opacity="0.75" fill="none" stroke-linecap="round"/>
               {/* Texte cursif "Home" */}
-              <text
-                x="68"
-                y="136"
-                font-family="Georgia, serif"
-                font-size="22"
-                fill="#c0392b"
-                opacity="0.75"
-                font-style="italic"
-                transform="rotate(-4, 130, 128)"
-              >
-                Home
-              </text>
+              <text x="68" y="136" font-family="Georgia, serif" font-size="22" fill="#c0392b" opacity="0.75" font-style="italic" transform="rotate(-4, 130, 128)">Home</text>
             </svg>
           </div>
 
@@ -305,52 +229,15 @@ function LabHero(props: { slides: HeroSlide[] }) {
               <span class="lab-hero-nav-arrow-label">← collection</span>
             </div>
             {/* SVG cursif "Shop" avec flèche pointant vers GARMENTS */}
-            <svg
-              class="lab-hero-handwriting"
-              viewBox="0 0 280 160"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+            <svg class="lab-hero-handwriting" viewBox="0 0 280 160" fill="none" xmlns="http://www.w3.org/2000/svg">
               {/* Ellipse */}
-              <ellipse
-                cx="148"
-                cy="128"
-                rx="105"
-                ry="22"
-                stroke="#c0392b"
-                stroke-width="0.8"
-                opacity="0.6"
-              />
+              <ellipse cx="148" cy="128" rx="105" ry="22" stroke="#c0392b" stroke-width="0.8" opacity="0.6"/>
               {/* Flèche courbe vers le haut */}
-              <path
-                d="M 170 106 C 175 75, 165 45, 148 16"
-                stroke="#c0392b"
-                stroke-width="0.9"
-                opacity="0.65"
-                fill="none"
-              />
+              <path d="M 170 106 C 175 75, 165 45, 148 16" stroke="#c0392b" stroke-width="0.9" opacity="0.65" fill="none"/>
               {/* Pointe de flèche */}
-              <path
-                d="M 148 16 L 140 27 M 148 16 L 157 25"
-                stroke="#c0392b"
-                stroke-width="0.9"
-                opacity="0.65"
-                fill="none"
-                stroke-linecap="round"
-              />
+              <path d="M 148 16 L 140 27 M 148 16 L 157 25" stroke="#c0392b" stroke-width="0.9" opacity="0.65" fill="none" stroke-linecap="round"/>
               {/* Texte cursif "Shop" */}
-              <text
-                x="90"
-                y="136"
-                font-family="Georgia, serif"
-                font-size="22"
-                fill="#c0392b"
-                opacity="0.65"
-                font-style="italic"
-                transform="rotate(-3, 148, 128)"
-              >
-                Shop
-              </text>
+              <text x="90" y="136" font-family="Georgia, serif" font-size="22" fill="#c0392b" opacity="0.65" font-style="italic" transform="rotate(-3, 148, 128)">Shop</text>
             </svg>
           </div>
 
@@ -364,6 +251,7 @@ function LabHero(props: { slides: HeroSlide[] }) {
             </A>
             <div class="lab-hero-scroll">SCROLL &nbsp;↓</div>
           </div>
+
         </div>
 
         {/* Column 2: Central hero image */}
@@ -376,20 +264,13 @@ function LabHero(props: { slides: HeroSlide[] }) {
                   <div
                     class="lab-hero-slide"
                     style={{
-                      opacity:
-                        i() === current() ? "1" : i() === prevIdx() ? "0" : "0",
-                      "z-index":
-                        i() === current() ? "2" : i() === prevIdx() ? "1" : "0",
+                      opacity: i() === current() ? "1" : i() === prevIdx() ? "0" : "0",
+                      "z-index": i() === current() ? "2" : i() === prevIdx() ? "1" : "0",
                       transition: "opacity 0.9s cubic-bezier(0.4,0,0.2,1)",
                     }}
                   >
                     {url ? (
-                      <img
-                        src={url}
-                        class="lab-hero-img"
-                        alt={slide.title || ""}
-                        loading={i() === 0 ? "eager" : "lazy"}
-                      />
+                      <img src={url} class="lab-hero-img" alt={slide.title || ""} loading={i() === 0 ? "eager" : "lazy"} />
                     ) : (
                       <div class="lab-hero-placeholder" />
                     )}
@@ -414,37 +295,18 @@ function LabHero(props: { slides: HeroSlide[] }) {
           </div>
           {/* Slide counter */}
           <div class="lab-hero-counter">
-            <button
-              class="lab-hero-nav"
-              onClick={() => {
-                prev();
-                restart();
-              }}
-            >
-              ←
-            </button>
+            <button class="lab-hero-nav" onClick={() => { prev(); restart(); }}>←</button>
             <span class="lab-hero-count-text">
-              {String(current() + 1).padStart(2, "0")} /{" "}
-              {String(slides().length).padStart(2, "0")}
+              {String(current() + 1).padStart(2, "0")} / {String(slides().length).padStart(2, "0")}
             </span>
-            <button
-              class="lab-hero-nav"
-              onClick={() => {
-                next();
-                restart();
-              }}
-            >
-              →
-            </button>
+            <button class="lab-hero-nav" onClick={() => { next(); restart(); }}>→</button>
           </div>
         </div>
 
         {/* Column 3: Product detail sidebar */}
         <div class="lab-hero-detail-col">
           <div class="lab-hero-detail-header">
-            <span class="lab-hero-experiment">
-              EXPERIMENT {String(current() + 1).padStart(2, "0")}
-            </span>
+            <span class="lab-hero-experiment">EXPERIMENT {String(current() + 1).padStart(2, "0")}</span>
             <span class="lab-hero-detail-dots">⋮</span>
           </div>
           <h2 class="lab-hero-detail-title">
@@ -458,10 +320,7 @@ function LabHero(props: { slides: HeroSlide[] }) {
               {/* placeholder price */}
               €350
             </span>
-            <A
-              href={slides()[current()]?.cta_url || "/shop"}
-              class="lab-hero-detail-cta"
-            >
+            <A href={slides()[current()]?.cta_url || "/shop"} class="lab-hero-detail-cta">
               VIEW &nbsp;→
             </A>
           </div>
@@ -471,10 +330,7 @@ function LabHero(props: { slides: HeroSlide[] }) {
               {(_, i) => (
                 <button
                   class={`lab-hero-dot ${current() === i() ? "active" : ""}`}
-                  onClick={() => {
-                    goTo(i());
-                    restart();
-                  }}
+                  onClick={() => { goTo(i()); restart(); }}
                 />
               )}
             </For>
@@ -523,6 +379,7 @@ function LabGrid(props: { products: Product[]; loading: boolean }) {
   return (
     <section class="lab-grid-section">
       <div class="lab-grid-container">
+
         {/* ── LEFT: Collection list ── */}
         <div class="lab-grid-left">
           <div class="lab-grid-section-label">COLLECTION</div>
@@ -531,12 +388,7 @@ function LabGrid(props: { products: Product[]; loading: boolean }) {
               when={!props.loading}
               fallback={
                 <For each={[1, 2, 3, 4, 5]}>
-                  {() => (
-                    <div
-                      class="lab-collection-item skeleton"
-                      style="height:48px"
-                    />
-                  )}
+                  {() => <div class="lab-collection-item skeleton" style="height:48px" />}
                 </For>
               }
             >
@@ -546,19 +398,15 @@ function LabGrid(props: { products: Product[]; loading: boolean }) {
                     class={`lab-collection-item ${activeIdx() === i() ? "active" : ""}`}
                     onClick={() => handleSelect(i())}
                   >
-                    <span class="lab-collection-num">
-                      {String(i() + 1).padStart(2, "0")}
-                    </span>
+                    <span class="lab-collection-num">{String(i() + 1).padStart(2, "0")}</span>
                     <span class="lab-collection-dash">—</span>
                     <span class="lab-collection-name">
-                      {p.name?.toUpperCase() ||
-                        `TRÄNCËNÐ ${["I", "II", "III", "IV", "V"][i()]}`}
+                      {p.name?.toUpperCase() || `TRÄNCËNÐ ${["I","II","III","IV","V"][i()]}`}
                     </span>
-                    {activeIdx() === i() ? (
-                      <span class="lab-collection-arrow">→</span>
-                    ) : (
-                      <span class="lab-collection-plus">+</span>
-                    )}
+                    {activeIdx() === i()
+                      ? <span class="lab-collection-arrow">→</span>
+                      : <span class="lab-collection-plus">+</span>
+                    }
                   </button>
                 )}
               </For>
@@ -580,12 +428,8 @@ function LabGrid(props: { products: Product[]; loading: boolean }) {
           <Show when={selected()}>
             {/* Product name + price header */}
             <div class="lab-notes-product-header">
-              <span class="lab-notes-product-name">
-                {selected()!.name?.toUpperCase()}
-              </span>
-              <span class="lab-notes-product-price">
-                {selected()!.price?.toLocaleString("fr-FR")} €
-              </span>
+              <span class="lab-notes-product-name">{selected()!.name?.toUpperCase()}</span>
+              <span class="lab-notes-product-price">{selected()!.price?.toLocaleString("fr-FR")} €</span>
             </div>
           </Show>
 
@@ -610,12 +454,8 @@ function LabGrid(props: { products: Product[]; loading: boolean }) {
             <div class="lab-note-row">
               <span class="lab-note-key">STOCK</span>
               <span class="lab-note-dash">—</span>
-              <span
-                class="lab-note-val"
-                style={
-                  selected()?.in_stock ? "color:var(--ink)" : "color:#b03020"
-                }
-              >
+              <span class="lab-note-val"
+                style={selected()?.in_stock ? "color:var(--ink)" : "color:#b03020"}>
                 {selected()?.in_stock ? "EN STOCK" : "ÉPUISÉ"}
               </span>
             </div>
@@ -678,30 +518,20 @@ function LabGrid(props: { products: Product[]; loading: boolean }) {
           <div class="lab-panel-header">
             <span class="lab-panel-title">DETAILS</span>
             <Show when={selected()}>
-              <span class="lab-detail-price">
-                {selected()!.price?.toLocaleString("fr-FR")} €
-              </span>
+              <span class="lab-detail-price">{selected()!.price?.toLocaleString("fr-FR")} €</span>
             </Show>
           </div>
 
           <div class="lab-detail-thumbs">
             <Show
               when={!props.loading}
-              fallback={
-                <For each={[1, 2, 3]}>
-                  {() => <div class="lab-detail-thumb skeleton" />}
-                </For>
-              }
+              fallback={<For each={[1,2,3]}>{() => <div class="lab-detail-thumb skeleton" />}</For>}
             >
               <Show
                 when={selectedImages().length > 0}
                 fallback={
-                  <For each={[1, 2, 3]}>
-                    {() => (
-                      <div class="lab-detail-thumb">
-                        <div class="lab-detail-thumb-inner" />
-                      </div>
-                    )}
+                  <For each={[1,2,3]}>
+                    {() => <div class="lab-detail-thumb"><div class="lab-detail-thumb-inner" /></div>}
                   </For>
                 }
               >
@@ -711,12 +541,7 @@ function LabGrid(props: { products: Product[]; loading: boolean }) {
                       class={`lab-detail-thumb ${activeThumb() === i() ? "active" : ""}`}
                       onClick={() => setActiveThumb(i())}
                     >
-                      <img
-                        src={url}
-                        alt=""
-                        class="lab-detail-thumb-img"
-                        loading="lazy"
-                      />
+                      <img src={url} alt="" class="lab-detail-thumb-img" loading="lazy" />
                     </button>
                   )}
                 </For>
@@ -733,15 +558,13 @@ function LabGrid(props: { products: Product[]; loading: boolean }) {
                 class="lab-detail-preview-img"
                 style="transition:opacity 0.25s ease"
               />
-              <A
-                href={`/products/${selected()?.id}`}
-                class="lab-detail-preview-cta"
-              >
+              <A href={`/products/${selected()?.id}`} class="lab-detail-preview-cta">
                 VOIR →
               </A>
             </div>
           </Show>
         </div>
+
       </div>
     </section>
   );
@@ -749,18 +572,12 @@ function LabGrid(props: { products: Product[]; loading: boolean }) {
 
 // ── HOME PAGE ─────────────────────────────────────────────────
 export default function Home() {
-  const { data: slides, loading: slidesLoading } = usePbData(
-    getHeroSlides,
-    MOCK_HERO_SLIDES ?? FALLBACK_SLIDES,
-  );
+  const { data: slides, loading: slidesLoading } = usePbData(getHeroSlides, MOCK_HERO_SLIDES ?? FALLBACK_SLIDES);
   const { data: featured, loading: featuredLoading } = usePbData(
     getFeaturedProducts,
-    (MOCK_PRODUCTS ?? []).filter((p) => p.featured),
+    ( MOCK_PRODUCTS ?? [] ).filter((p) => p.featured),
   );
-  const { data: categories, loading: categoriesLoading } = usePbData(
-    getCategories,
-    MOCK_CATEGORIES ?? [],
-  );
+  const { data: categories, loading: categoriesLoading } = usePbData(getCategories, MOCK_CATEGORIES ?? []);
 
   return (
     <>
@@ -775,37 +592,28 @@ export default function Home() {
       <div class="mobile-only">
         <MobileHero products={featured()} loading={featuredLoading()} />
       </div>
-      {/* Featured products section */}
-      <section class="lab-products-section">
+ {/* Featured products section */}
+ <section class="lab-products-section">
         <div class="container">
           <div class="lab-section-header">
             <div class="lab-section-label">NOUVEAUTÉS</div>
-            <A href="/shop" class="lab-section-link">
-              VOIR TOUT →
-            </A>
+            <A href="/shop" class="lab-section-link">VOIR TOUT →</A>
           </div>
           <Show
             when={!featuredLoading()}
             fallback={
               <div class="lab-products-grid">
-                <For each={[1, 2, 3]}>
-                  {() => (
-                    <div class="skeleton" style="aspect-ratio:3/4;width:100%" />
-                  )}
-                </For>
+                <For each={[1,2,3,4,5,6]}>{() => <div class="skeleton" style="aspect-ratio:3/4;width:100%" />}</For>
               </div>
             }
           >
             <div class="lab-products-grid">
-              <For each={featured().slice(0, 3)}>
+              <For each={featured()}>
                 {(p) => (
                   <ProductCard
                     product={p}
                     onQuickAdd={(p) => {
-                      const c = parseColors(p.colors)[0] ?? {
-                        name: "Défaut",
-                        hex: "#111",
-                      };
+                      const c = parseColors(p.colors)[0] ?? { name: "Défaut", hex: "#111" };
                       addToCart(p, c, p.sizes?.[0] || "UNIQUE");
                     }}
                   />
@@ -815,6 +623,7 @@ export default function Home() {
           </Show>
         </div>
       </section>
+
       {/* Lab grid: collection + notes + details — desktop uniquement */}
       <div class="desktop-only">
         <LabGrid products={featured()} loading={featuredLoading()} />
@@ -833,60 +642,8 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Categories */}
-      <section class="lab-categories-section">
-        <div class="container">
-          <div class="lab-section-header">
-            <div class="lab-section-label">CATEGORIES</div>
-          </div>
-          <Show
-            when={!categoriesLoading()}
-            fallback={
-              <div class="categories-grid">
-                <For each={[1, 2, 3, 4]}>
-                  {() => <div class="skeleton" style="aspect-ratio:3/4" />}
-                </For>
-              </div>
-            }
-          >
-            <div class="categories-grid">
-              <For each={categories()}>
-                {(cat) => {
-                  const imgUrl = getCategoryImageUrl(cat);
-                  return (
-                    <A href={`/shop?cat=${cat.slug}`} class="category-card">
-                      <div
-                        class="category-card-bg"
-                        style={
-                          imgUrl
-                            ? `background-image:url(${imgUrl});background-size:cover;background-position:center`
-                            : ""
-                        }
-                      >
-                        <Show when={!imgUrl}>
-                          <div class="category-placeholder">⬡</div>
-                        </Show>
-                      </div>
-                      <div class="category-card-overlay" />
-                      <div class="category-card-content">
-                        <div class="category-card-name">{cat.name}</div>
-                        <Show when={cat.description}>
-                          <div class="category-card-count">
-                            {cat.description}
-                          </div>
-                        </Show>
-                        <div class="category-card-count" style="margin-top:4px">
-                          EXPLORER →
-                        </div>
-                      </div>
-                    </A>
-                  );
-                }}
-              </For>
-            </div>
-          </Show>
-        </div>
-      </section>
+     
+    
 
       {/* Brand statement */}
       <section class="lab-brand-section">
@@ -894,19 +651,13 @@ export default function Home() {
           <div class="lab-brand-grid">
             <div class="lab-brand-left">
               <p class="lab-brand-eyebrow">TRÄNCËNÐ MOVEMENT</p>
-              <h2 class="lab-brand-title">
-                MORE THAN
-                <br />A BRAND
-              </h2>
+              <h2 class="lab-brand-title">MORE THAN<br />A BRAND</h2>
               <p class="lab-brand-desc">
                 TRÄNCËNÐ est une marque née pour ceux qui refusent les limites.
-                Chaque pièce représente l'ambition, la créativité et le
-                dépassement. Nous créons des vêtements pour ceux qui veulent
-                aller au-delà.
+                Chaque pièce représente l'ambition, la créativité et le dépassement.
+                Nous créons des vêtements pour ceux qui veulent aller au-delà.
               </p>
-              <A href="/about" class="lab-brand-cta">
-                HISTOIRE & PHILOSOPHIE →
-              </A>
+              <A href="/about" class="lab-brand-cta">HISTOIRE & PHILOSOPHIE →</A>
             </div>
             <div class="lab-brand-right">
               <div class="lab-brand-stat-grid">

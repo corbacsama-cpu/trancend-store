@@ -213,6 +213,47 @@ input, textarea { font-family: inherit; }
   text-align: left;
   margin-top: 8px;
 }
+.navbar-logo img {
+  height: 124px;      /* desktop */
+  width: auto;
+  display: block;
+}
+@media (max-width: 768px) {
+  .navbar-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* 🔹 Logo parfaitement centré */
+  .navbar-logo {
+    position: absolute;
+    left: 45%;
+    transform: translateX(-50%);
+    margin: 0;
+  }
+
+  /* 🔹 Cache menu desktop */
+  .navbar-links {
+    display: none;
+  }
+
+  /* 🔹 Actions restent à droite */
+  .navbar-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* 🔹 Hamburger forcé à gauche */
+  .hamburger {
+    display: flex;
+    position: absolute;
+    left: 16px;
+  }
+}
 
 /* ════════ LAB HERO ════════ */
 .lab-hero {
@@ -828,67 +869,25 @@ input, textarea { font-family: inherit; }
 .lab-products-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: var(--border);
+  gap: 8px;
+ 
 }
 
-/* ════════ CATEGORIES ════════ */
-.lab-categories-section { padding: 72px 0; border-bottom: 1px solid var(--border); }
-.categories-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: var(--border);
+
+/* tablette */
+@media (max-width: 768px) {
+  .lab-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
-.category-card {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 3/4;
-  background: var(--surface-alt);
-  display: block;
+
+/* mobile */
+@media (max-width: 480px) {
+  .lab-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
-.category-card-bg {
-  width: 100%;
-  height: 100%;
-  background: var(--surface);
-  transition: transform 0.5s ease;
-}
-.category-card:hover .category-card-bg { transform: scale(1.04); }
-.category-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  font-size: 32px;
-  color: var(--ink-4);
-}
-.category-card-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 60%);
-}
-.category-card-content {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 20px;
-}
-.category-card-name {
-  font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: #fff;
-  margin-bottom: 4px;
-}
-.category-card-count {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  color: rgba(255,255,255,0.7);
-  text-transform: uppercase;
-}
+
 
 /* ════════ BRAND SECTION ════════ */
 .lab-brand-section { padding: 100px 0; border-bottom: 1px solid var(--border); }
@@ -970,7 +969,7 @@ input, textarea { font-family: inherit; }
 .footer-container { max-width: 1400px; margin: 0 auto; padding: 0 32px; }
 .footer-main {
   display: grid;
-  grid-template-columns: 2fr 2fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
   gap: 60px;
   padding: 64px 0 48px;
   border-bottom: 1px solid var(--border);
@@ -1854,7 +1853,6 @@ input, textarea { font-family: inherit; }
 @media (max-width: 480px) {
   .lab-hero-title { font-size: clamp(32px, 11vw, 48px); }
   .lab-hero-detail-col { padding: 16px; }
-  .lab-products-grid { grid-template-columns: 1fr; }
   .products-grid { grid-template-columns: 1fr 1fr; }
   .categories-grid { grid-template-columns: 1fr 1fr; }
   .lab-experiment-grid { grid-template-columns: 1fr; gap: 14px; }

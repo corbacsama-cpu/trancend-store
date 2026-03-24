@@ -30,11 +30,7 @@ export default function Shop() {
 
       <div class="lab-shop-page">
 
-        {/* ── TOP HEADER BAR ── */}
-        <div class="lab-shop-topbar">
-          <span class="lab-shop-topbar-left">TRÄNCËNÐ LAB</span>
-          <span class="lab-shop-topbar-right">File No. TRCND-001</span>
-        </div>
+       
 
         <div class="lab-shop-inner">
 
