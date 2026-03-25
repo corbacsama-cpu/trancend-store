@@ -52,10 +52,30 @@ function MobileHero(props: { products: Product[]; loading: boolean }) {
     return imgs[0] ?? "";
   };
 
-  // Extrait la couleur dominante de l'image et l'applique à la navbar
-  let imgRef: HTMLImageElement | undefined;
-  let canvasRef: HTMLCanvasElement | undefined;
+  // Auto-slide toutes les 10s
+  let timer: ReturnType<typeof setInterval>;
 
+  function goTo(i: number) {
+    setIdx(i);
+    extractColor(imgUrl());
+  }
+
+  function startTimer() {
+    clearInterval(timer);
+    timer = setInterval(() => {
+      const total = Math.min(props.products.length, 5);
+      if (total <= 1) return;
+      setIdx(i => (i + 1) % total);
+    }, 10000);
+  }
+
+  // Clic manuel sur dot : reset le timer
+  function handleDotClick(i: number) {
+    goTo(i);
+    startTimer();
+  }
+
+  // Extrait la couleur dominante de l'image et l'applique à la navbar
   function extractColor(url: string) {
     if (!url || typeof window === "undefined") return;
     const img = new Image();
@@ -70,7 +90,6 @@ function MobileHero(props: { products: Product[]; loading: boolean }) {
         if (!ctx) return;
         ctx.drawImage(img, 0, 0, 1, 1);
         const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
-        // Applique la couleur à la navbar via CSS variable sur :root
         document.documentElement.style.setProperty("--mobile-hero-tint", `rgb(${r},${g},${b})`);
         document.documentElement.style.setProperty("--mobile-hero-tint-text",
           (r * 0.299 + g * 0.587 + b * 0.114) > 128 ? "#111110" : "#f0ede8"
@@ -81,12 +100,16 @@ function MobileHero(props: { products: Product[]; loading: boolean }) {
   }
 
   onMount(() => {
+    // Démarre l'auto-slide
+    startTimer();
+    // Réagit au changement d'image pour mettre à jour la couleur navbar
     createEffect(() => {
       extractColor(imgUrl());
     });
   });
 
   onCleanup(() => {
+    clearInterval(timer);
     if (typeof document !== "undefined") {
       document.documentElement.style.removeProperty("--mobile-hero-tint");
       document.documentElement.style.removeProperty("--mobile-hero-tint-text");
@@ -106,7 +129,6 @@ function MobileHero(props: { products: Product[]; loading: boolean }) {
             loading="eager"
           />
         </Show>
-        {/* Gradient overlay bas */}
         <div class="mobile-hero-gradient" />
       </div>
 
@@ -122,19 +144,16 @@ function MobileHero(props: { products: Product[]; loading: boolean }) {
         </Show>
       </div>
 
-      {/* SHOP ALL — bas */}
+      {/* SHOP ALL + dots — bas */}
       <div class="mobile-hero-bottom">
-        <A href="/shop" class="mobile-hero-shop-all">
-          SHOP ALL →
-        </A>
-        {/* Dots si plusieurs produits */}
+        <A href="/shop" class="mobile-hero-shop-all">SHOP ALL →</A>
         <Show when={props.products.length > 1}>
           <div class="mobile-hero-dots">
             <For each={props.products.slice(0, 5)}>
               {(_, i) => (
                 <button
                   class={`mobile-hero-dot ${idx() === i() ? "active" : ""}`}
-                  onClick={() => setIdx(i())}
+                  onClick={() => handleDotClick(i())}
                 />
               )}
             </For>
@@ -351,7 +370,7 @@ function LabHero(props: { slides: HeroSlide[] }) {
 
 // ── LAB GRID SECTION ──────────────────────────────────────────
 // Replace with your actual YouTube video ID
-const YOUTUBE_VIDEO_ID = "g-06sDLT8is"; // ← change this to your video ID
+const YOUTUBE_VIDEO_ID = "dQw4w9WgXcQ"; // ← change this to your video ID
 
 function LabGrid(props: { products: Product[]; loading: boolean }) {
   const list = () => props.products.slice(0, 5);
@@ -592,8 +611,27 @@ export default function Home() {
       <div class="mobile-only">
         <MobileHero products={featured()} loading={featuredLoading()} />
       </div>
- {/* Featured products section */}
- <section class="lab-products-section">
+
+      {/* Lab grid: collection + notes + details — desktop uniquement */}
+      <div class="desktop-only">
+        <LabGrid products={featured()} loading={featuredLoading()} />
+      </div>
+
+      {/* Marquee */}
+      <div class="lab-marquee">
+        <div class="lab-marquee-track">
+          <For each={[...MARQUEE_ITEMS, ...MARQUEE_ITEMS]}>
+            {(item) => (
+              <span class="lab-marquee-item">
+                {item === "—" ? <span class="lab-marquee-sep">—</span> : item}
+              </span>
+            )}
+          </For>
+        </div>
+      </div>
+
+      {/* Featured products section */}
+      <section class="lab-products-section">
         <div class="container">
           <div class="lab-section-header">
             <div class="lab-section-label">NOUVEAUTÉS</div>
@@ -623,27 +661,6 @@ export default function Home() {
           </Show>
         </div>
       </section>
-
-      {/* Lab grid: collection + notes + details — desktop uniquement */}
-      <div class="desktop-only">
-        <LabGrid products={featured()} loading={featuredLoading()} />
-      </div>
-
-      {/* Marquee */}
-      <div class="lab-marquee">
-        <div class="lab-marquee-track">
-          <For each={[...MARQUEE_ITEMS, ...MARQUEE_ITEMS]}>
-            {(item) => (
-              <span class="lab-marquee-item">
-                {item === "—" ? <span class="lab-marquee-sep">—</span> : item}
-              </span>
-            )}
-          </For>
-        </div>
-      </div>
-
-     
-    
 
       {/* Brand statement */}
       <section class="lab-brand-section">
