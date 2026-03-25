@@ -370,7 +370,7 @@ function LabHero(props: { slides: HeroSlide[] }) {
 
 // ── LAB GRID SECTION ──────────────────────────────────────────
 // Replace with your actual YouTube video ID
-const YOUTUBE_VIDEO_ID = "dQw4w9WgXcQ"; // ← change this to your video ID
+const YOUTUBE_VIDEO_ID = "g-06sDLT8is"; // ← change this to your video ID
 
 function LabGrid(props: { products: Product[]; loading: boolean }) {
   const list = () => props.products.slice(0, 5);
@@ -611,27 +611,8 @@ export default function Home() {
       <div class="mobile-only">
         <MobileHero products={featured()} loading={featuredLoading()} />
       </div>
-
-      {/* Lab grid: collection + notes + details — desktop uniquement */}
-      <div class="desktop-only">
-        <LabGrid products={featured()} loading={featuredLoading()} />
-      </div>
-
-      {/* Marquee */}
-      <div class="lab-marquee">
-        <div class="lab-marquee-track">
-          <For each={[...MARQUEE_ITEMS, ...MARQUEE_ITEMS]}>
-            {(item) => (
-              <span class="lab-marquee-item">
-                {item === "—" ? <span class="lab-marquee-sep">—</span> : item}
-              </span>
-            )}
-          </For>
-        </div>
-      </div>
-
-      {/* Featured products section */}
-      <section class="lab-products-section">
+  {/* Featured products section */}
+  <section class="lab-products-section">
         <div class="container">
           <div class="lab-section-header">
             <div class="lab-section-label">NOUVEAUTÉS</div>
@@ -661,6 +642,25 @@ export default function Home() {
           </Show>
         </div>
       </section>
+      {/* Lab grid: collection + notes + details — desktop uniquement */}
+      <div class="desktop-only">
+        <LabGrid products={featured()} loading={featuredLoading()} />
+      </div>
+
+      {/* Marquee */}
+      <div class="lab-marquee">
+        <div class="lab-marquee-track">
+          <For each={[...MARQUEE_ITEMS, ...MARQUEE_ITEMS]}>
+            {(item) => (
+              <span class="lab-marquee-item">
+                {item === "—" ? <span class="lab-marquee-sep">—</span> : item}
+              </span>
+            )}
+          </For>
+        </div>
+      </div>
+
+    
 
       {/* Brand statement */}
       <section class="lab-brand-section">
