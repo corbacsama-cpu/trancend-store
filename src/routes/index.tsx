@@ -66,7 +66,7 @@ function MobileHero(props: { products: Product[]; loading: boolean }) {
       const total = Math.min(props.products.length, 5);
       if (total <= 1) return;
       setIdx(i => (i + 1) % total);
-    }, 10000);
+    }, 5000);
   }
 
   // Clic manuel sur dot : reset le timer
@@ -201,69 +201,20 @@ function LabHero(props: { slides: HeroSlide[] }) {
         {/* Column 1: Title block */}
         <div class="lab-hero-title-col">
 
-          {/* Bloc eyebrow + titre */}
           <div class="lab-hero-block">
             <p class="lab-hero-eyebrow">GARMENTS AS EXPERIMENTS</p>
             <h1 class="lab-hero-title">TRÄNCËNÐ</h1>
           </div>
 
-          {/* Séparateur horizontal */}
           <div class="lab-hero-h-rule" />
 
-          {/* Annotation manuscrite "Home → LAB" */}
-          <div class="lab-hero-annotation-wrap">
-            <div class="lab-hero-nav-label">
-              <span class="lab-hero-nav-item-label">LAB</span>
-              <span class="lab-hero-nav-arrow-label">← accueil</span>
-            </div>
-            {/* SVG cursif "Home" avec flèche pointant vers LAB */}
-            <svg class="lab-hero-handwriting" viewBox="0 0 280 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-              {/* Ellipse */}
-              <ellipse cx="130" cy="128" rx="105" ry="22" stroke="#c0392b" stroke-width="0.8" opacity="0.7"/>
-              {/* Flèche courbe vers le haut-gauche (vers LAB) */}
-              <path d="M 148 106 C 148 80, 120 50, 95 18" stroke="#c0392b" stroke-width="0.9" opacity="0.75" fill="none"/>
-              {/* Pointe de flèche */}
-              <path d="M 95 18 L 88 28 M 95 18 L 104 26" stroke="#c0392b" stroke-width="0.9" opacity="0.75" fill="none" stroke-linecap="round"/>
-              {/* Texte cursif "Home" */}
-              <text x="68" y="136" font-family="Georgia, serif" font-size="22" fill="#c0392b" opacity="0.75" font-style="italic" transform="rotate(-4, 130, 128)">Home</text>
-            </svg>
-          </div>
-
-          {/* Séparateur horizontal */}
-          <div class="lab-hero-h-rule" />
-
-          {/* Lignes de sous-titre */}
           <div class="lab-hero-subtitle-lines">
             <span>RESEARCH — FORM / TEXTURE / IDENTITY</span>
             <span>LIMITED EDITIONS</span>
           </div>
 
-          {/* Séparateur horizontal */}
           <div class="lab-hero-h-rule" />
 
-          {/* Annotation manuscrite "Shop → GARMENTS" */}
-          <div class="lab-hero-annotation-wrap">
-            <div class="lab-hero-nav-label">
-              <span class="lab-hero-nav-item-label">GARMENTS</span>
-              <span class="lab-hero-nav-arrow-label">← collection</span>
-            </div>
-            {/* SVG cursif "Shop" avec flèche pointant vers GARMENTS */}
-            <svg class="lab-hero-handwriting" viewBox="0 0 280 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-              {/* Ellipse */}
-              <ellipse cx="148" cy="128" rx="105" ry="22" stroke="#c0392b" stroke-width="0.8" opacity="0.6"/>
-              {/* Flèche courbe vers le haut */}
-              <path d="M 170 106 C 175 75, 165 45, 148 16" stroke="#c0392b" stroke-width="0.9" opacity="0.65" fill="none"/>
-              {/* Pointe de flèche */}
-              <path d="M 148 16 L 140 27 M 148 16 L 157 25" stroke="#c0392b" stroke-width="0.9" opacity="0.65" fill="none" stroke-linecap="round"/>
-              {/* Texte cursif "Shop" */}
-              <text x="90" y="136" font-family="Georgia, serif" font-size="22" fill="#c0392b" opacity="0.65" font-style="italic" transform="rotate(-3, 148, 128)">Shop</text>
-            </svg>
-          </div>
-
-          {/* Séparateur horizontal */}
-          <div class="lab-hero-h-rule" />
-
-          {/* CTA + Scroll */}
           <div class="lab-hero-cta-block">
             <A href="/shop" class="lab-hero-cta">
               EXPLORE COLLECTION &nbsp;→
@@ -596,7 +547,7 @@ export default function Home() {
     getFeaturedProducts,
     ( MOCK_PRODUCTS ?? [] ).filter((p) => p.featured),
   );
-  const { data: categories, loading: categoriesLoading } = usePbData(getCategories, MOCK_CATEGORIES ?? []);
+  
 
   return (
     <>

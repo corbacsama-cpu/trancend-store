@@ -124,6 +124,15 @@ input, textarea { font-family: inherit; }
   transition: color var(--transition);
 }
 .navbar-icon-btn:hover { color: var(--ink); }
+
+.navbar-icon-btn.active {
+  color: #000; /* ou ton brand color */
+}
+
+.navbar-icon-btn.active svg {
+  stroke-width: 2;
+}
+
 .navbar-cart-btn {
   font-family: var(--font-mono);
   font-size: 10.5px;
@@ -1062,7 +1071,7 @@ input, textarea { font-family: inherit; }
 .footer-container { max-width: 1400px; margin: 0 auto; padding: 0 32px; }
 .footer-main {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  grid-template-columns: 2fr 1fr 1fr;
   gap: 60px;
   padding: 64px 0 48px;
   border-bottom: 1px solid var(--border);
@@ -2208,4 +2217,41 @@ input, textarea { font-family: inherit; }
   color: var(--ink);
   margin-bottom: 0;
   font-style: italic;
+}
+
+
+/* ════════════════════════════════════════
+   NAVBAR — annotations manuscrites sur LAB & GARMENTS
+════════════════════════════════════════ */
+
+/* Li avec annotation — position relative pour le tooltip */
+.navbar-link-item {
+  position: relative;
+  list-style: none;
+}
+
+/* L'annotation est cachée par défaut, apparaît au survol */
+.navbar-annotation {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 500;
+  width: 160px;
+}
+
+.navbar-link-item:hover .navbar-annotation {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* SVG manuscrit dans la navbar */
+.navbar-handwriting {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.08));
 }
