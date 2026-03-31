@@ -22,7 +22,8 @@ export default function Contact() {
             <p class="page-subtitle">NOUS SOMMES LÀ POUR VOUS</p>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start">
+          <div class="contact-grid">
+            {/* Formulaire */}
             <div>
               {sent() ? (
                 <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink);padding:48px 0;border-top:1px solid var(--border)">
@@ -52,7 +53,8 @@ export default function Contact() {
                       onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border-dark)")}
                     />
                   </div>
-                  <button type="submit" style="padding:16px;background:var(--ink);color:var(--bg);font-family:var(--font-mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;border:none;cursor:pointer;transition:opacity 0.2s"
+                  <button type="submit"
+                    style="padding:16px;background:var(--ink);color:var(--bg);font-family:var(--font-mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;border:none;cursor:pointer;transition:opacity 0.2s"
                     onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.8")}
                     onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
                   >
@@ -62,7 +64,8 @@ export default function Contact() {
               )}
             </div>
 
-            <div style="padding-top:8px;display:flex;flex-direction:column;gap:36px">
+            {/* Infos */}
+            <div style="display:flex;flex-direction:column;gap:36px">
               <div>
                 <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:0.24em;text-transform:uppercase;color:var(--ink-3);margin-bottom:12px">EMAIL</div>
                 <a href="mailto:contact@trancendstore.com" style="font-size:14px;color:var(--ink);border-bottom:1px solid var(--border-dark);padding-bottom:2px">

@@ -2255,3 +2255,19 @@ input, textarea { font-family: inherit; }
   display: block;
   filter: drop-shadow(0 1px 4px rgba(0,0,0,0.08));
 }
+
+
+/* ════════ CONTACT PAGE ════════ */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+}
