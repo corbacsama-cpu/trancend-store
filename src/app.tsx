@@ -6,6 +6,7 @@ import Navbar from "~/components/Navbar";
 import CartDrawer from "~/components/CartDrawer";
 import Footer from "~/components/Footer";
 import "~/styles/global.css";
+import "~/lib/i18n";
 
 export default function App() {
   return (

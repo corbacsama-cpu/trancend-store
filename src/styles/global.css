@@ -331,7 +331,7 @@ input, textarea { font-family: inherit; }
   /* 🔹 Logo parfaitement centré */
   .navbar-logo {
     position: absolute;
-    left: 50%;
+    left: 40%;
     transform: translateX(-50%);
     margin: 0;
   }

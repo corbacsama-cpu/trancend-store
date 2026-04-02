@@ -1,5 +1,7 @@
 import { Title } from "@solidjs/meta";
 import { A } from "@solidjs/router";
+import { useTranslation } from "solid-i18next";
+import i18n from "~/lib/i18n";
 import { For, Show, createSignal, onMount, onCleanup, createEffect } from "solid-js";
 import ProductCard from "~/components/ProductCard";
 import {
