@@ -8,10 +8,19 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 const pb = new PocketBase(process.env.POCKETBASE_URL || "http://127.0.0.1:8090");
 
+async function pbAdminAuth() {
+  if (!pb.authStore.isValid) {
+    await pb.admins.authWithPassword(
+      process.env.PB_ADMIN_EMAIL!,
+      process.env.PB_ADMIN_PASSWORD!,
+    );
+  }
+}
+
 const BREVO_API_KEY = process.env.BREVO_API_KEY!;
-const STORE_EMAIL = process.env.STORE_EMAIL || "contact@trancendstore.com";
-const STORE_NAME = "TRÄNCËNÐ";
-const DEBUG = process.env.STRIPE_WEBHOOK_DEBUG === "true";
+const STORE_EMAIL   = process.env.STORE_EMAIL || "contact@trancendstore.com";
+const STORE_NAME    = "TRÄNCËNÐ";
+const DEBUG         = process.env.STRIPE_WEBHOOK_DEBUG === "true";
 
 // ── Email helper ───────────────────────────────────────────────
 async function sendEmail(to: string, subject: string, htmlContent: string, toName = "") {
@@ -160,8 +169,8 @@ function buildStripeConfirmEmail(opts: {
 export async function POST({ request }: { request: Request }) {
   try {
     const bodyBuffer = await request.arrayBuffer();
-    const bodyRaw = Buffer.from(bodyBuffer);
-    const signature = request.headers.get("stripe-signature");
+    const bodyRaw    = Buffer.from(bodyBuffer);
+    const signature  = request.headers.get("stripe-signature");
 
     let event: Stripe.Event;
 
@@ -206,46 +215,47 @@ export async function POST({ request }: { request: Request }) {
 
       const meta = session.metadata || {};
       const shippingFee = parseFloat(meta.shippingFee || "0");
-      const total = parseFloat(meta.total || "0") || (session.amount_total ?? 0) / 100;
+      const total       = parseFloat(meta.total || "0") || (session.amount_total ?? 0) / 100;
 
       // Créer la commande dans PocketBase
+      await pbAdminAuth();
       const order = await pb.collection("orders").create({
-        user: meta.userId || null,
-        stripe_session_id: session.id,
+        user:                 meta.userId || null,
+        stripe_session_id:    session.id,
         stripe_payment_intent: session.payment_intent || null,
-        customer_email: meta.customerEmail || session.customer_details?.email || "",
-        customer_name: meta.customerName || session.customer_details?.name || "",
-        total: session.amount_total,
-        currency: session.currency,
-        status: "confirmed",
-        shipping_address: meta.shippingAddress || "",
-        delivery_mode: meta.deliveryMode || "shipping",
-        relay_city: meta.relayCity || "",
-        payment_method: "stripe",
-        shipping_fee: shippingFee,
-        items: parsedItems,
+        customer_email:       meta.customerEmail || session.customer_details?.email || "",
+        customer_name:        meta.customerName  || session.customer_details?.name  || "",
+        total:                session.amount_total,
+        currency:             session.currency,
+        status:               "confirmed",
+        shipping_address:     meta.shippingAddress || "",
+        delivery_mode:        meta.deliveryMode    || "shipping",
+        relay_city:           meta.relayCity       || "",
+        payment_method:       "stripe",
+        shipping_fee:         shippingFee,
+        items:                parsedItems,
       });
 
       console.log("✅ Order saved:", order.id);
 
       // Email confirmation au client
       const customerEmail = meta.customerEmail || session.customer_details?.email || "";
-      const customerName = meta.customerName || session.customer_details?.name || "";
+      const customerName  = meta.customerName  || session.customer_details?.name  || "";
 
       if (customerEmail) {
         await sendEmail(
           customerEmail,
           `TRÄNCËNÐ — Commande confirmée #${order.id.slice(-8).toUpperCase()}`,
           buildStripeConfirmEmail({
-            name: customerName || customerEmail,
-            items: parsedItems,
+            name:            customerName || customerEmail,
+            items:           parsedItems,
             shippingAddress: meta.shippingAddress || "",
-            deliveryMode: meta.deliveryMode || "shipping",
-            relayCity: meta.relayCity || "",
+            deliveryMode:    meta.deliveryMode    || "shipping",
+            relayCity:       meta.relayCity       || "",
             total,
             shippingFee,
-            orderId: order.id,
-            sessionId: session.id,
+            orderId:         order.id,
+            sessionId:       session.id,
           }),
           customerName,
         );

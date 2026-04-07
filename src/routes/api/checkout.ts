@@ -286,57 +286,42 @@ export async function POST({ request }: { request: Request }) {
   // ── Paiement MoMo ────────────────────────────────────────────
   if (paymentMethod === "momo") {
     try {
-      // Créer la commande directement en PocketBase (pending)
-      const order = await pb.collection("orders").create({
+      const shippingAddrFull = deliveryMode === "relay"
+        ? `Point relais (${relayCity}) — ${shippingAddress}`
+        : shippingAddress;
+
+      const orderData = {
         user:             userId || null,
         customer_email:   customerEmail,
         customer_name:    customerName || "",
-        status:           "pending_momo",
-        shipping_address: shippingAddress,
-        delivery_mode:    deliveryMode,
-        relay_city:       relayCity || "",
+        status:           "pending",
+        shipping_address: shippingAddrFull,
         payment_method:   "momo",
-        momo_phone:       momoPhone || "",
-        shipping_fee:     shippingFee || 0,
-        total:            total || 0,
+        retrait_mode:     deliveryMode || "shipping",
+        retrait_point:    relayCity    || "",
+        total:            Math.round((total || 0) * 100),
+        currency:         "eur",
         items:            validatedItems,
-      });
+      };
 
-      // Email confirmation au client
-      await sendEmail(
-        customerEmail,
-        `TRÄNCËNÐ — Commande reçue #${order.id.slice(-8).toUpperCase()}`,
-        buildOrderConfirmEmail({
-          name:            customerName || customerEmail,
-          items:           validatedItems,
-          shippingAddress: shippingAddress,
-          deliveryMode:    deliveryMode,
-          relayCity:       relayCity || "",
-          paymentMethod:   "momo",
-          total:           total || 0,
-          shippingFee:     shippingFee || 0,
-          orderId:         order.id,
-        }),
-        customerName,
-      );
+      console.log("[checkout] Creating MoMo order:", JSON.stringify(orderData, null, 2));
 
-      // Email interne à l'équipe
-      await sendEmail(
-        STORE_EMAIL,
-        `Nouvelle commande MoMo — ${customerName || customerEmail}`,
-        `<p>Nouvelle commande MoMo reçue.</p>
-         <p><strong>Client :</strong> ${customerName} (${customerEmail})</p>
-         <p><strong>Téléphone MoMo :</strong> ${momoPhone}</p>
-         <p><strong>Total :</strong> ${total} €</p>
-         <p><strong>Livraison :</strong> ${shippingAddress}</p>
-         <p><strong>ID commande :</strong> ${order.id}</p>`,
-        STORE_NAME,
-      );
+      const order = await pb.collection("orders").create(orderData);
 
+      console.log("[checkout] MoMo order created:", order.id);
+
+      // Retourner juste l'orderId — les emails et la confirmation
+      // se font dans momo-status.ts après validation du paiement
       return json({ success: true, orderId: order.id });
+
     } catch (err: any) {
-      console.error("[checkout] MoMo error:", err);
-      return json({ error: err?.message || "Erreur commande MoMo" }, { status: 500 });
+      console.error("[checkout] MoMo error full:", JSON.stringify({
+        message:  err?.message,
+        status:   err?.status,
+        response: err?.response,
+        data:     err?.data,
+      }, null, 2));
+      return json({ error: err?.response?.message || err?.message || "Erreur commande MoMo" }, { status: 500 });
     }
   }
 

@@ -2544,3 +2544,89 @@ input, textarea { font-family: inherit; }
   border: 1px solid var(--border);
   border-left: 3px solid var(--ink);
 }
+
+
+/* ════════════════════════════════════════
+   ORDER CONFIRM PAGE — MoMo polling UI
+════════════════════════════════════════ */
+
+.order-confirm-icon {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+.order-confirm-icon--waiting { background: #f0ede8; color: var(--ink-3); border: 1px solid var(--border); }
+.order-confirm-icon--success { background: #f0faf4; color: #2d6a3f; border: 1px solid #b8dfc6; }
+.order-confirm-icon--failed  { background: #fdf0f0; color: #b03020; border: 1px solid #f0c0b8; }
+
+.order-confirm-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+.order-confirm-desc {
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.8;
+  margin-bottom: 28px;
+}
+.order-confirm-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ink-4);
+  text-transform: uppercase;
+  margin-top: 16px;
+}
+.order-confirm-ref {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  margin-bottom: 28px;
+  padding: 10px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: inline-block;
+}
+.order-confirm-btn {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background: var(--ink);
+  color: var(--bg);
+  padding: 14px 28px;
+  transition: opacity 0.2s;
+  margin-top: 8px;
+}
+.order-confirm-btn:hover { opacity: 0.8; }
+
+/* Dots animation */
+.order-confirm-spinner {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 20px 0 8px;
+}
+.order-confirm-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ink-3);
+  animation: dotPulse 1.4s ease-in-out infinite;
+}
+.order-confirm-dot:nth-child(2) { animation-delay: 0.2s; }
+.order-confirm-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotPulse {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40%           { transform: scale(1);   opacity: 1; }
+}

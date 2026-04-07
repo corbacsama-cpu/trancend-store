@@ -116,10 +116,32 @@ export default function Checkout() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Erreur lors du paiement");
 
+      console.log("[check] checkout response:", data);
+
       if (payment() === "stripe" && data.url) {
         window.location.href = data.url;
-      } else if (payment() === "momo") {
-        navigate("/order-confirm?method=momo&orderId=" + (data.orderId || ""));
+      } else if (payment() === "momo" && data.orderId) {
+        console.log("[check] calling momo-pay with orderId:", data.orderId, "phone:", momoPhone());
+
+        const momoRes = await fetch("/api/momo-pay", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderId: data.orderId, momoPhone: momoPhone() }),
+        });
+        const momoData = await momoRes.json();
+
+        console.log("[check] momo-pay status:", momoRes.status, "data:", momoData);
+
+        if (!momoRes.ok) throw new Error(momoData.error || "Erreur MoMo");
+        if (!momoData.referenceId) throw new Error("referenceId manquant dans la réponse MoMo");
+
+        console.log("[check] navigating to order-confirm...");
+        navigate(
+          `/order-confirm?method=momo&orderId=${data.orderId}&referenceId=${momoData.referenceId}`
+        );
+      } else {
+        // Cas non géré — afficher ce qu'on a reçu
+        throw new Error(`Réponse inattendue: ${JSON.stringify(data)}`);
       }
     } catch (err: any) {
       setError(err?.message || "Erreur lors de la commande");
