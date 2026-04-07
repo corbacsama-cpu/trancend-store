@@ -61,8 +61,9 @@ export interface MomoRequestPayBody {
  * Retourne le referenceId (UUID) à sauvegarder pour vérification
  */
 export async function requestMomoPayment(
+
   body: MomoRequestPayBody,
-  referenceId: string,
+  referenceId = crypto.randomUUID(),
 ): Promise<void> {
   const token = await getMomoToken();
 
