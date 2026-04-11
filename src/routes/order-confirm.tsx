@@ -11,38 +11,36 @@ type Status = "waiting" | "success" | "failed" | "error";
 
 export default function OrderConfirm() {
   const [params] = useSearchParams();
-  const getParam = (value: string | string[] | undefined, fallback = "") =>
-    Array.isArray(value) ? (value[0] ?? fallback) : (value ?? fallback);
-  const method  = () => getParam(params.method, "stripe");
-  const orderId = () => getParam(params.orderId);
-  const refId   = () => getParam(params.referenceId);
+  const method    = () => params.method || "stripe";
+  const refId     = () => params.referenceId || "";
+  const orderData = () => params.orderData || "";
+  // orderId disponible après création (retourné par momo-status après succès)
+  const [confirmedOrderId, setConfirmedOrderId] = createSignal("");
 
   const [status, setStatus]     = createSignal<Status>("waiting");
   const [reason, setReason]     = createSignal("");
   const [attempts, setAttempts] = createSignal(0);
   let timer: ReturnType<typeof setInterval>;
 
-  function handleSuccess() {
+  function handleSuccess(orderId = "") {
     setStatus("success");
+    if (orderId) setConfirmedOrderId(orderId);
     clearInterval(timer);
-    // Vider le panier côté client
     try { clearCart(); } catch (_) {}
   }
 
-  
   // Polling toutes les 3s (max 40 tentatives = 2 min)
   async function poll() {
-    if (!orderId() || !refId()) return;
+    if (!refId()) return;
 
     try {
-      
       const res  = await fetch(
-        `/api/momo-status?referenceId=${encodeURIComponent(refId())}&orderId=${encodeURIComponent(orderId())}`,
+        `/api/momo-status?referenceId=${encodeURIComponent(refId())}&orderData=${encodeURIComponent(orderData())}`,
       );
       const data = await res.json();
 
       if (data.status === "SUCCESSFUL") {
-        handleSuccess();
+        handleSuccess(data.orderId || "");
         return;
       }
       if (data.status === "FAILED") {
@@ -52,7 +50,6 @@ export default function OrderConfirm() {
         return;
       }
 
-      // PENDING → continuer
       setAttempts(a => a + 1);
       if (attempts() >= 40) {
         setStatus("error");
@@ -67,11 +64,10 @@ export default function OrderConfirm() {
 
   onMount(() => {
     if (method() === "stripe") {
-      // Stripe → succès immédiat + vider panier
       handleSuccess();
       return;
     }
-    if (orderId() && refId()) {
+    if (refId() && orderData()) {
       poll();
       timer = setInterval(poll, 3000);
     } else {
@@ -110,7 +106,6 @@ export default function OrderConfirm() {
               <p class="order-confirm-sub">Vérification en cours… ({attempts()}/40)</p>
             </Show>
 
-            {/* ── SUCCESS ── */}
             <Show when={status() === "success"}>
               <div class="order-confirm-icon order-confirm-icon--success">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -121,9 +116,9 @@ export default function OrderConfirm() {
               <p class="order-confirm-desc">
                 Votre paiement a été validé. Un email de confirmation vous a été envoyé.
               </p>
-              <Show when={orderId()}>
+              <Show when={confirmedOrderId()}>
                 <div class="order-confirm-ref">
-                  Référence : <strong>#{orderId().slice(-8).toUpperCase()}</strong>
+                  Référence : <strong>#{confirmedOrderId().slice(-8).toUpperCase()}</strong>
                 </div>
               </Show>
               <A href="/shop" class="order-confirm-btn">CONTINUER LES ACHATS →</A>

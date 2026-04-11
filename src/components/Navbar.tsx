@@ -151,7 +151,7 @@ export default function Navbar() {
               <A href="/about">ARCHIVE</A>
             </li>
             <li>
-              <A href="/about">PROCESS</A>
+              <A href="/process">PROCESS</A>
             </li>
             <li>
               <A href="/about">ABOUT</A>
@@ -202,7 +202,7 @@ export default function Navbar() {
               <button onClick={() => i18n.changeLanguage("en")}>en</button>
             </div>
             <button class="navbar-cart-btn" onClick={() => setCartOpen(true)}>
-            ({isServer ? "0" : cartCount()}) {t("navbar.bag")}
+              ({isServer ? "0" : cartCount()}) {t("navbar.bag")}
               <span
                 class="cart-count"
                 style={`display:${!isServer && cartCount() > 0 ? "flex" : "none"}`}

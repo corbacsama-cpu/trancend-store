@@ -22,11 +22,11 @@ export default function Checkout() {
 
   // Adresse
   const [address, setAddress] = createSignal("");
-  const [city, setCity]       = createSignal("");
+  const [city, setCity] = createSignal("");
   const [country, setCountry] = createSignal("Congo (Brazzaville)");
-  const [zip, setZip]         = createSignal("");
-  const [email, setEmail]     = createSignal(currentUser()?.email || "");
-  const [name, setName]       = createSignal(currentUser()?.name || "");
+  const [zip, setZip] = createSignal("");
+  const [email, setEmail] = createSignal(currentUser()?.email || "");
+  const [name, setName] = createSignal(currentUser()?.name || "");
 
   // Livraison
   const [delivery, setDelivery] = createSignal<DeliveryMode>("shipping");
@@ -34,18 +34,18 @@ export default function Checkout() {
   const [relayCity, setRelayCity] = createSignal("");
 
   // Paiement
-  const [payment, setPayment]   = createSignal<PaymentMethod>("stripe");
+  const [payment, setPayment] = createSignal<PaymentMethod>("stripe");
   const [momoPhone, setMomoPhone] = createSignal("");
 
   // État
   const [loading, setLoading] = createSignal(false);
-  const [error, setError]     = createSignal("");
-  const [ready, setReady]     = createSignal(false);
+  const [error, setError] = createSignal("");
+  const [ready, setReady] = createSignal(false);
 
   // ── Dérivés ──────────────────────────────────────────────────
-  const showMomo    = createMemo(() => isCongo(country()) || isCongo(relayCity()));
+  const showMomo = createMemo(() => isCongo(country()) || isCongo(relayCity()));
   const shippingFee = createMemo(() => delivery() === "shipping" ? SHIPPING_FEE : 0);
-  const total       = createMemo(() => cartTotal() + shippingFee());
+  const total = createMemo(() => cartTotal() + shippingFee());
 
   // Auto MoMo si Congo
   createEffect(() => {
@@ -63,7 +63,7 @@ export default function Checkout() {
     const user = currentUser();
     if (user) {
       if (user.email) setEmail(user.email);
-      if (user.name)  setName(user.name);
+      if (user.name) setName(user.name);
     }
   });
 
@@ -90,20 +90,20 @@ export default function Checkout() {
       const body = {
         items: cart().map((item) => ({
           productId: item.product.id,
-          size:      item.size || "UNIQUE",
-          quantity:  item.quantity,
-          color:     item.color || "",
-          image:     getImageUrl(item.product) || "",
+          size: item.size || "UNIQUE",
+          quantity: item.quantity,
+          color: item.color || "",
+          image: getImageUrl(item.product) || "",
         })),
-        userId:          currentUser()?.id,
-        customerEmail:   email(),
-        customerName:    name(),
+        userId: currentUser()?.id,
+        customerEmail: email(),
+        customerName: name(),
         shippingAddress: shippingAddr,
-        deliveryMode:    delivery(),
-        relayCity:       delivery() === "relay" ? relayCity() : "",
-        paymentMethod:   payment(),
-        shippingFee:     shippingFee(),
-        total:           total(),
+        deliveryMode: delivery(),
+        relayCity: delivery() === "relay" ? relayCity() : "",
+        paymentMethod: payment(),
+        shippingFee: shippingFee(),
+        total: total(),
         ...(payment() === "momo" ? { momoPhone: momoPhone() } : {}),
       };
 
@@ -120,13 +120,16 @@ export default function Checkout() {
 
       if (payment() === "stripe" && data.url) {
         window.location.href = data.url;
-      } else if (payment() === "momo" && data.orderId) {
-        console.log("[check] calling momo-pay with orderId:", data.orderId, "phone:", momoPhone());
+      } else if (payment() === "momo" && data.momoReady) {
+        console.log("[check] calling momo-pay with validatedOrder");
 
         const momoRes = await fetch("/api/momo-pay", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orderId: data.orderId, momoPhone: momoPhone() }),
+          body: JSON.stringify({
+            validatedOrder: data.validatedOrder,
+            momoPhone: momoPhone(),
+          }),
         });
         const momoData = await momoRes.json();
 
@@ -137,10 +140,9 @@ export default function Checkout() {
 
         console.log("[check] navigating to order-confirm...");
         navigate(
-          `/order-confirm?method=momo&orderId=${data.orderId}&referenceId=${momoData.referenceId}`
+          `/order-confirm?method=momo&referenceId=${momoData.referenceId}&orderData=${encodeURIComponent(JSON.stringify(data.validatedOrder))}`
         );
       } else {
-        // Cas non géré — afficher ce qu'on a reçu
         throw new Error(`Réponse inattendue: ${JSON.stringify(data)}`);
       }
     } catch (err: any) {

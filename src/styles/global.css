@@ -2630,3 +2630,265 @@ input, textarea { font-family: inherit; }
   0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
   40%           { transform: scale(1);   opacity: 1; }
 }
+
+
+/* ════════════════════════════════════════
+   PAGE PROCESS
+════════════════════════════════════════ */
+
+/* Header */
+.process-header {
+  border-bottom: 1px solid var(--border);
+  padding: 0 0 56px;
+}
+.process-header-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: end;
+  padding-top: 60px;
+}
+.process-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 0 0 16px;
+}
+.process-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 5.5vw, 68px);
+  font-weight: 700;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.0;
+  margin: 0 0 20px;
+}
+.process-hero-desc {
+  font-size: 14px;
+  color: var(--ink-2);
+  line-height: 1.85;
+  margin: 0;
+  max-width: 420px;
+}
+
+/* Metadata table */
+.process-meta { display: flex; flex-direction: column; gap: 0; padding-bottom: 4px; }
+.process-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+}
+.process-meta-row--last { border-bottom: none; }
+.process-meta-key {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.process-meta-val {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink);
+  letter-spacing: 0.08em;
+}
+
+/* Steps */
+.process-steps { padding: 60px 0 80px; }
+.process-step {
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.process-step--open { background: var(--surface); }
+.process-step:hover { background: var(--surface); }
+.process-step-row {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+}
+.process-step-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  padding: 32px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  border-right: 1px solid var(--border);
+}
+.process-step-body {
+  padding: 28px 0 28px 40px;
+}
+.process-step-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.process-step-phase {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.process-step-toggle {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  color: var(--ink-3);
+  margin-right: 4px;
+  transition: transform 0.2s;
+  display: inline-block;
+  line-height: 1;
+}
+.process-step-toggle.open { transform: rotate(45deg); }
+.process-step-title {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.8vw, 34px);
+  font-weight: 700;
+  font-style: italic;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.1;
+}
+
+/* Step expanded content */
+.process-step-content {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 40px;
+  padding: 0 0 36px 120px;
+  border-top: 1px solid var(--border);
+  margin-top: 0;
+}
+.process-step-illus {
+  width: 100%;
+  aspect-ratio: 280 / 200;
+  border: 1px solid var(--border);
+  background: #f5f1eb;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.process-step-detail {
+  padding-top: 28px;
+}
+.process-step-desc {
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.9;
+  margin: 0 0 24px;
+}
+.process-step-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.process-step-list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.process-step-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.process-step-list-text {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+}
+
+/* Manifeste */
+.process-manifeste {
+  background: var(--ink);
+  border-top: 1px solid var(--border);
+}
+.process-manifeste-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  padding: 80px 0;
+}
+.process-manifeste-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(240,237,232,0.4);
+  margin: 0 0 16px;
+}
+.process-manifeste-title {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 4vw, 50px);
+  font-weight: 700;
+  font-style: italic;
+  color: #f0ede8;
+  line-height: 1.1;
+  margin: 0;
+}
+.process-manifeste-body { display: flex; flex-direction: column; gap: 16px; }
+.process-manifeste-text {
+  font-size: 13px;
+  color: rgba(240,237,232,0.65);
+  line-height: 1.9;
+  margin: 0;
+}
+.process-manifeste-cta {
+  display: inline-block;
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #f0ede8;
+  border-bottom: 1px solid rgba(240,237,232,0.3);
+  padding-bottom: 3px;
+  text-decoration: none;
+  width: fit-content;
+  transition: opacity 0.2s;
+}
+.process-manifeste-cta:hover { opacity: 0.7; }
+
+/* ── RESPONSIVE MOBILE ── */
+@media (max-width: 768px) {
+  .process-header-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding-top: 40px;
+  }
+  .process-hero-desc { max-width: 100%; }
+  .process-meta { border-top: 1px solid var(--border); }
+
+  .process-step-row { grid-template-columns: 52px 1fr; }
+  .process-step-num { font-size: 9px; padding: 24px 0; }
+  .process-step-body { padding: 20px 0 20px 20px; }
+  .process-step-title { font-size: 22px; }
+
+  .process-step-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 0 28px 20px;
+  }
+  .process-step-illus { aspect-ratio: 280 / 180; }
+  .process-step-list { grid-template-columns: 1fr; }
+
+  .process-manifeste-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 56px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .process-step-content { padding: 0 0 24px 12px; }
+  .process-step-body { padding: 18px 0 18px 14px; }
+}

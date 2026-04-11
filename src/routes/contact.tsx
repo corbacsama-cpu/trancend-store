@@ -2,11 +2,38 @@ import { Title } from "@solidjs/meta";
 import { createSignal } from "solid-js";
 
 export default function Contact() {
-  const [sent, setSent] = createSignal(false);
+  const [sent, setSent]       = createSignal(false);
+  const [loading, setLoading] = createSignal(false);
+  const [error, setError]     = createSignal("");
+  const [formName, setFormName]       = createSignal("");
+  const [formEmail, setFormEmail]     = createSignal("");
+  const [formMessage, setFormMessage] = createSignal("");
 
-  function handleSubmit(e: Event) {
+  async function handleSubmit(e: Event) {
     e.preventDefault();
-    setSent(true);
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name:    formName(),
+          email:   formEmail(),
+          message: formMessage(),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur lors de l'envoi");
+
+      setSent(true);
+    } catch (err: any) {
+      setError(err?.message || "Une erreur est survenue. Réessayez.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   const inputStyle = "width:100%;background:transparent;border:none;border-bottom:1px solid var(--border-dark);padding:10px 0;color:var(--ink);font-size:13px;font-family:var(--font-body);outline:none;transition:border-color 0.2s";
@@ -31,34 +58,45 @@ export default function Contact() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} style="display:flex;flex-direction:column;gap:24px">
+                  {error() && (
+                    <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;color:#b03020;padding:12px 16px;border:1px solid #f0c0b8;background:#fdf0f0">
+                      {error()}
+                    </div>
+                  )}
                   <div>
                     <label style={labelStyle}>NOM COMPLET</label>
                     <input type="text" required style={inputStyle}
-                      onFocus={(e) => (e.currentTarget.style.borderColor = "var(--ink)")}
-                      onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border-dark)")}
+                      value={formName()}
+                      onInput={e => setFormName(e.currentTarget.value)}
+                      onFocus={e => (e.currentTarget.style.borderColor = "var(--ink)")}
+                      onBlur={e  => (e.currentTarget.style.borderColor = "var(--border-dark)")}
                     />
                   </div>
                   <div>
                     <label style={labelStyle}>EMAIL</label>
                     <input type="email" required style={inputStyle}
-                      onFocus={(e) => (e.currentTarget.style.borderColor = "var(--ink)")}
-                      onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border-dark)")}
+                      value={formEmail()}
+                      onInput={e => setFormEmail(e.currentTarget.value)}
+                      onFocus={e => (e.currentTarget.style.borderColor = "var(--ink)")}
+                      onBlur={e  => (e.currentTarget.style.borderColor = "var(--border-dark)")}
                     />
                   </div>
                   <div>
                     <label style={labelStyle}>MESSAGE</label>
                     <textarea required rows="6"
                       style={`${inputStyle};resize:vertical`}
-                      onFocus={(e) => (e.currentTarget.style.borderColor = "var(--ink)")}
-                      onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border-dark)")}
+                      value={formMessage()}
+                      onInput={e => setFormMessage(e.currentTarget.value)}
+                      onFocus={e => (e.currentTarget.style.borderColor = "var(--ink)")}
+                      onBlur={e  => (e.currentTarget.style.borderColor = "var(--border-dark)")}
                     />
                   </div>
-                  <button type="submit"
+                  <button type="submit" disabled={loading()}
                     style="padding:16px;background:var(--ink);color:var(--bg);font-family:var(--font-mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;border:none;cursor:pointer;transition:opacity 0.2s"
-                    onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.8")}
-                    onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+                    onMouseEnter={e => (e.currentTarget.style.opacity = "0.8")}
+                    onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
                   >
-                    ENVOYER LE MESSAGE →
+                    {loading() ? "ENVOI EN COURS..." : "ENVOYER LE MESSAGE →"}
                   </button>
                 </form>
               )}
