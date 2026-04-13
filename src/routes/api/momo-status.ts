@@ -185,6 +185,7 @@ function buildClientConfirmEmail(opts: {
     <tr>
       <td style="padding:10px 0;border-bottom:1px solid #e8e3dc;font-family:sans-serif;font-size:13px;color:#333">
         ${i.name}${i.size && i.size !== "UNIQUE" ? ` · ${i.size}` : ""}${i.color ? ` · ${i.color}` : ""}
+        ${i.image ? `<br><img src="${i.image}" width="48" height="48" style="object-fit:cover;margin-top:6px;display:block;border:1px solid #e8e3dc">` : ""}
       </td>
       <td style="padding:10px 0;border-bottom:1px solid #e8e3dc;text-align:right;font-family:sans-serif;font-size:13px;color:#333">
         x${i.quantity} · ${(i.price * i.quantity).toLocaleString("fr-FR")} €
