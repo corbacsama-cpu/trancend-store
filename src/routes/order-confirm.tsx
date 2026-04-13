@@ -11,14 +11,14 @@ type Status = "waiting" | "success" | "failed" | "error";
 
 export default function OrderConfirm() {
   const [params] = useSearchParams();
-  const method    = () => params.method || "stripe";
-  const refId     = () => params.referenceId || "";
+  const method = () => params.method || "stripe";
+  const refId = () => params.referenceId || "";
   const orderData = () => params.orderData || "";
   // orderId disponible après création (retourné par momo-status après succès)
   const [confirmedOrderId, setConfirmedOrderId] = createSignal("");
 
-  const [status, setStatus]     = createSignal<Status>("waiting");
-  const [reason, setReason]     = createSignal("");
+  const [status, setStatus] = createSignal<Status>("waiting");
+  const [reason, setReason] = createSignal("");
   const [attempts, setAttempts] = createSignal(0);
   let timer: ReturnType<typeof setInterval>;
 
@@ -26,7 +26,7 @@ export default function OrderConfirm() {
     setStatus("success");
     if (orderId) setConfirmedOrderId(orderId);
     clearInterval(timer);
-    try { clearCart(); } catch (_) {}
+    try { clearCart(); } catch (_) { }
   }
 
   // Polling toutes les 3s (max 40 tentatives = 2 min)
@@ -34,7 +34,7 @@ export default function OrderConfirm() {
     if (!refId()) return;
 
     try {
-      const res  = await fetch(
+      const res = await fetch(
         `/api/momo-status?referenceId=${encodeURIComponent(refId())}&orderData=${encodeURIComponent(orderData())}`,
       );
       const data = await res.json();
@@ -89,8 +89,8 @@ export default function OrderConfirm() {
             <Show when={status() === "waiting"}>
               <div class="order-confirm-icon order-confirm-icon--waiting">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M12 6v6l4 2"/>
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 6v6l4 2" />
                 </svg>
               </div>
               <h1 class="order-confirm-title">En attente de paiement</h1>
@@ -109,7 +109,7 @@ export default function OrderConfirm() {
             <Show when={status() === "success"}>
               <div class="order-confirm-icon order-confirm-icon--success">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="M20 6L9 17l-5-5"/>
+                  <path d="M20 6L9 17l-5-5" />
                 </svg>
               </div>
               <h1 class="order-confirm-title">Commande confirmée ✓</h1>
@@ -128,8 +128,8 @@ export default function OrderConfirm() {
             <Show when={status() === "failed"}>
               <div class="order-confirm-icon order-confirm-icon--failed">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <circle cx="12" cy="12" r="10"/>
-                  <path d="M15 9l-6 6M9 9l6 6"/>
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M15 9l-6 6M9 9l6 6" />
                 </svg>
               </div>
               <h1 class="order-confirm-title">Paiement refusé</h1>
@@ -144,8 +144,8 @@ export default function OrderConfirm() {
             <Show when={status() === "error"}>
               <div class="order-confirm-icon order-confirm-icon--failed">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="M12 9v4M12 17h.01"/>
-                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <path d="M12 9v4M12 17h.01" />
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
                 </svg>
               </div>
               <h1 class="order-confirm-title">Délai dépassé</h1>

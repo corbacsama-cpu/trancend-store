@@ -18,9 +18,9 @@ async function pbAdminAuth() {
 }
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY!;
-const STORE_EMAIL   = process.env.STORE_EMAIL || "contact@trancendstore.com";
-const STORE_NAME    = "TRÄNCËNÐ";
-const DEBUG         = process.env.STRIPE_WEBHOOK_DEBUG === "true";
+const STORE_EMAIL = process.env.STORE_EMAIL || "contact@trancendstore.com";
+const STORE_NAME = "TRÄNCËNÐ";
+const DEBUG = process.env.STRIPE_WEBHOOK_DEBUG === "true";
 
 // ── Email helper ───────────────────────────────────────────────
 async function sendEmail(to: string, subject: string, htmlContent: string, toName = "") {
@@ -169,8 +169,8 @@ function buildStripeConfirmEmail(opts: {
 export async function POST({ request }: { request: Request }) {
   try {
     const bodyBuffer = await request.arrayBuffer();
-    const bodyRaw    = Buffer.from(bodyBuffer);
-    const signature  = request.headers.get("stripe-signature");
+    const bodyRaw = Buffer.from(bodyBuffer);
+    const signature = request.headers.get("stripe-signature");
 
     let event: Stripe.Event;
 
@@ -215,62 +215,68 @@ export async function POST({ request }: { request: Request }) {
 
       const meta = session.metadata || {};
       const shippingFee = parseFloat(meta.shippingFee || "0");
-      const total       = parseFloat(meta.total || "0") || (session.amount_total ?? 0) / 100;
+      const total = parseFloat(meta.total || "0") || (session.amount_total ?? 0) / 100;
 
       // Créer la commande dans PocketBase
       await pbAdminAuth();
       const order = await pb.collection("orders").create({
-        user:                 meta.userId || null,
-        stripe_session_id:    session.id,
+        user: meta.userId || null,
+        stripe_session_id: session.id,
         stripe_payment_intent: session.payment_intent || null,
-        customer_email:       meta.customerEmail || session.customer_details?.email || "",
-        customer_name:        meta.customerName  || session.customer_details?.name  || "",
-        total:                session.amount_total,
-        currency:             session.currency,
-        status:               "confirmed",
-        shipping_address:     meta.shippingAddress || "",
-        delivery_mode:        meta.deliveryMode    || "shipping",
-        relay_city:           meta.relayCity       || "",
-        payment_method:       "stripe",
-        shipping_fee:         shippingFee,
-        items:                parsedItems,
+        customer_email: meta.customerEmail || session.customer_details?.email || "",
+        customer_name: meta.customerName || session.customer_details?.name || "",
+        total: session.amount_total,
+        currency: session.currency,
+        status: "confirmed",
+        shipping_address: meta.shippingAddress || "",
+        delivery_mode: meta.deliveryMode || "shipping",
+        relay_city: meta.relayCity || "",
+        payment_method: "stripe",
+        shipping_fee: shippingFee,
+        items: parsedItems,
       });
 
       console.log("✅ Order saved:", order.id);
 
       // Email confirmation au client
       const customerEmail = meta.customerEmail || session.customer_details?.email || "";
-      const customerName  = meta.customerName  || session.customer_details?.name  || "";
+      const customerName = meta.customerName || session.customer_details?.name || "";
 
       if (customerEmail) {
         await sendEmail(
           customerEmail,
           `TRÄNCËNÐ — Commande confirmée #${order.id.slice(-8).toUpperCase()}`,
           buildStripeConfirmEmail({
-            name:            customerName || customerEmail,
-            items:           parsedItems,
+            name: customerName || customerEmail,
+            items: parsedItems,
             shippingAddress: meta.shippingAddress || "",
-            deliveryMode:    meta.deliveryMode    || "shipping",
-            relayCity:       meta.relayCity       || "",
+            deliveryMode: meta.deliveryMode || "shipping",
+            relayCity: meta.relayCity || "",
             total,
             shippingFee,
-            orderId:         order.id,
-            sessionId:       session.id,
+            orderId: order.id,
+            sessionId: session.id,
           }),
           customerName,
         );
       }
 
-      // Email interne
+      // Email interne propriétaire
       await sendEmail(
         STORE_EMAIL,
-        `Nouvelle commande Stripe — ${customerName || customerEmail} · ${total} €`,
-        `<p><strong>Client :</strong> ${customerName} (${customerEmail})</p>
-         <p><strong>Total :</strong> ${total} €</p>
-         <p><strong>Livraison :</strong> ${meta.shippingAddress}</p>
-         <p><strong>Mode :</strong> ${meta.deliveryMode}${meta.relayCity ? ` — ${meta.relayCity}` : ""}</p>
-         <p><strong>Session Stripe :</strong> ${session.id}</p>
-         <p><strong>ID commande :</strong> ${order.id}</p>`,
+        `🛍️ Nouvelle commande Stripe — ${customerName || customerEmail} · ${total.toLocaleString("fr-FR")} €`,
+        buildOwnerNotifEmail({
+          orderId: order.id,
+          customerName: customerName || customerEmail,
+          customerEmail: customerEmail,
+          total,
+          shippingFee,
+          deliveryMode: meta.deliveryMode || "shipping",
+          relayCity: meta.relayCity || "",
+          shippingAddress: meta.shippingAddress || "",
+          sessionId: session.id,
+          items: parsedItems,
+        }),
         STORE_NAME,
       );
     }
@@ -280,4 +286,134 @@ export async function POST({ request }: { request: Request }) {
     console.error("[webhook] Error:", err);
     return json({ error: err.message }, { status: 400 });
   }
+}
+
+// ── Template email propriétaire (Stripe) ──────────────────────────
+
+function buildOwnerNotifEmail(opts: {
+  orderId: string;
+  customerName: string;
+  customerEmail: string;
+  total: number;
+  shippingFee: number;
+  deliveryMode: string;
+  relayCity: string;
+  shippingAddress: string;
+  sessionId: string;
+  items: any[];
+}): string {
+  const itemsHtml = (opts.items || []).map(i => `
+    <tr>
+      <td style="padding:10px 0;border-bottom:1px solid #e8e3dc;font-family:sans-serif;font-size:13px;color:#333">
+        ${i.name}${i.size && i.size !== "UNIQUE" ? ` · ${i.size}` : ""}${i.color ? ` · ${i.color}` : ""}
+        ${i.image ? `<br><img src="${i.image}" width="48" height="48" style="object-fit:cover;margin-top:6px;display:block;border:1px solid #e8e3dc">` : ""}
+      </td>
+      <td style="padding:10px 0;border-bottom:1px solid #e8e3dc;text-align:right;font-family:sans-serif;font-size:13px;color:#333;vertical-align:top">
+        x${i.quantity}<br><strong>${(i.price * i.quantity).toLocaleString("fr-FR")} €</strong>
+      </td>
+    </tr>`).join("");
+
+  const deliveryLabel = opts.deliveryMode === "relay"
+    ? `Point relais — ${opts.relayCity}`
+    : opts.shippingAddress;
+
+  return `
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f0ede8;font-family:sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0ede8;padding:40px 20px">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background:#fff;max-width:600px;width:100%">
+
+        <!-- Header -->
+        <tr>
+          <td style="background:#111110;padding:24px 36px">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td><p style="margin:0;font-family:Georgia,serif;font-size:20px;font-style:italic;color:#f0ede8;letter-spacing:0.1em">TRÄNCËNÐ</p></td>
+                <td style="text-align:right"><p style="margin:0;font-family:monospace;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(240,237,232,0.5)">ADMIN — NOUVELLE COMMANDE</p></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Body -->
+        <tr><td style="padding:32px 36px">
+
+          <!-- Alerte -->
+          <div style="background:#f0faf4;border:1px solid #b8dfc6;border-left:4px solid #2d6a3f;padding:16px;margin-bottom:28px">
+            <p style="margin:0;font-size:15px;font-weight:700;color:#2d6a3f">🛍️ Nouvelle commande Stripe à traiter</p>
+            <p style="margin:4px 0 0;font-size:13px;color:#2d6a3f">Paiement confirmé · ${opts.total.toLocaleString("fr-FR")} €</p>
+          </div>
+
+          <!-- Référence + Client -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;border:1px solid #e8e3dc">
+            <tr>
+              <td style="padding:14px 16px;vertical-align:top;width:50%;border-right:1px solid #e8e3dc">
+                <p style="margin:0 0 4px;font-family:monospace;font-size:9px;color:#888;text-transform:uppercase;letter-spacing:0.18em">Référence</p>
+                <p style="margin:0;font-family:monospace;font-size:14px;font-weight:700;color:#111">#${opts.orderId.slice(-8).toUpperCase()}</p>
+              </td>
+              <td style="padding:14px 16px;vertical-align:top">
+                <p style="margin:0 0 4px;font-family:monospace;font-size:9px;color:#888;text-transform:uppercase;letter-spacing:0.18em">Client</p>
+                <p style="margin:0;font-size:14px;font-weight:600;color:#111">${opts.customerName}</p>
+                <p style="margin:2px 0 0;font-size:13px;color:#555"><a href="mailto:${opts.customerEmail}" style="color:#111">${opts.customerEmail}</a></p>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" style="padding:14px 16px;border-top:1px solid #e8e3dc">
+                <p style="margin:0 0 4px;font-family:monospace;font-size:9px;color:#888;text-transform:uppercase;letter-spacing:0.18em">Livraison</p>
+                <p style="margin:0;font-size:13px;color:#333;line-height:1.5">${deliveryLabel}</p>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Articles -->
+          <p style="margin:0 0 8px;font-family:monospace;font-size:9px;color:#888;text-transform:uppercase;letter-spacing:0.18em">Articles commandés</p>
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;border-top:2px solid #111">
+            <tbody>${itemsHtml}</tbody>
+          </table>
+
+          <!-- Totaux -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px">
+            <tr>
+              <td style="font-size:13px;color:#666;padding:4px 0">Sous-total</td>
+              <td style="font-size:13px;color:#666;text-align:right;padding:4px 0">${(opts.total - opts.shippingFee).toLocaleString("fr-FR")} €</td>
+            </tr>
+            <tr>
+              <td style="font-size:13px;color:#666;padding:4px 0">Livraison</td>
+              <td style="font-size:13px;color:#666;text-align:right;padding:4px 0">${opts.shippingFee === 0 ? "Gratuit" : `+${opts.shippingFee} €`}</td>
+            </tr>
+            <tr>
+              <td style="font-size:16px;font-weight:700;color:#111;padding:12px 0 4px;border-top:2px solid #111">TOTAL PERÇU</td>
+              <td style="font-size:16px;font-weight:700;color:#2d6a3f;text-align:right;padding:12px 0 4px;border-top:2px solid #111">${opts.total.toLocaleString("fr-FR")} €</td>
+            </tr>
+          </table>
+
+          <!-- Stripe ID -->
+          <div style="background:#f5f2ee;padding:12px 16px;border-left:3px solid #ccc9c2;margin-bottom:16px">
+            <p style="margin:0;font-family:monospace;font-size:9px;color:#888;text-transform:uppercase;letter-spacing:0.16em">Session Stripe</p>
+            <p style="margin:4px 0 0;font-family:monospace;font-size:10px;color:#555">${opts.sessionId}</p>
+          </div>
+
+          <p style="font-size:11px;color:#999;line-height:1.7;margin:0">
+            Paiement reçu via Stripe · Commande à préparer et expédier.
+          </p>
+
+        </td></tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="background:#f0ede8;padding:16px 36px;border-top:1px solid #ccc9c2">
+            <p style="margin:0;font-family:monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#888">
+              © ${new Date().getFullYear()} TRÄNCËNÐ — Notification interne
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
 }

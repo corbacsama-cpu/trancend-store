@@ -319,7 +319,7 @@ export async function POST({ request }: { request: Request }) {
       mode: "payment",
       payment_method_types: ["card"],
       line_items: lineItems,
-      success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${origin}/order-confirm?method=stripe`,
       cancel_url: `${origin}/checkout/cancel`,
       locale: "fr",
       customer_email: customerEmail,
