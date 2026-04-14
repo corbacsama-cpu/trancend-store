@@ -202,7 +202,11 @@ export default function Navbar() {
                 </svg>
               </A>
             </Show>
-
+            <div class="lang-switch navbar-lang-switch">
+              <button onClick={() => i18n.changeLanguage("fr")}>fr</button>
+              <span>/</span>
+              <button onClick={() => i18n.changeLanguage("en")}>en</button>
+            </div>
             <button class="navbar-cart-btn" onClick={() => setCartOpen(true)}>
               ({isServer ? "0" : cartCount()}) {t("navbar.bag")}
               <span
@@ -278,7 +282,11 @@ export default function Navbar() {
             >
               {t("navbar.contact")}
             </A>
-
+            <div class="lang-switch">
+              <button onClick={() => i18n.changeLanguage("fr")}>fr</button>
+              <span>/</span>
+              <button onClick={() => i18n.changeLanguage("en")}>en</button>
+            </div>
             <div class="mobile-menu-sep" />
 
             <A

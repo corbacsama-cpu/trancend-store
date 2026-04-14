@@ -2892,3 +2892,44 @@ input, textarea { font-family: inherit; }
   .process-step-content { padding: 0 0 24px 12px; }
   .process-step-body { padding: 18px 0 18px 14px; }
 }
+
+
+/* ════════ LANG SWITCH ════════ */
+.lang-switch {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.lang-switch button {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 0;
+  transition: color var(--transition);
+}
+.lang-switch button:hover { color: var(--ink); }
+.lang-switch span {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--ink-4);
+}
+
+/* Dans le menu mobile : un peu plus grand */
+.mobile-menu-nav .lang-switch {
+  margin: 8px 0 4px;
+}
+.mobile-menu-nav .lang-switch button {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--ink-2);
+}
+
+/* Cacher dans la navbar desktop sur mobile */
+@media (max-width: 768px) {
+  .navbar-lang-switch { display: none; }
+}

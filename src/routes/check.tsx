@@ -1,6 +1,6 @@
 import { Title } from "@solidjs/meta";
 import { useNavigate } from "@solidjs/router";
-import { createSignal, createEffect, createMemo, For, Show } from "solid-js";
+import { createSignal, createEffect, createMemo, For, Show, onMount } from "solid-js";
 import { cart, cartTotal, clearCart } from "~/lib/cart";
 import { currentUser, authReady, getImageUrl } from "~/lib/pocketbase";
 import { requireAuth } from "./auth";
@@ -23,14 +23,14 @@ export default function Checkout() {
   // Adresse
   const [address, setAddress] = createSignal("");
   const [city, setCity] = createSignal("");
-  const [country, setCountry] = createSignal("Congo (Brazzaville)");
+  const [country, setCountry] = createSignal("France"); // fallback
   const [zip, setZip] = createSignal("");
   const [email, setEmail] = createSignal(currentUser()?.email || "");
   const [name, setName] = createSignal(currentUser()?.name || "");
+  const [geoLoading, setGeoLoading] = createSignal(true);
 
   // Livraison
   const [delivery, setDelivery] = createSignal<DeliveryMode>("shipping");
-  // Pour le point relais : la personne saisit sa ville, on envoie un email de confirmation
   const [relayCity, setRelayCity] = createSignal("");
 
   // Paiement
@@ -41,6 +41,24 @@ export default function Checkout() {
   const [loading, setLoading] = createSignal(false);
   const [error, setError] = createSignal("");
   const [ready, setReady] = createSignal(false);
+
+  // ── Géolocalisation IP → pays par défaut ─────────────────────
+  onMount(async () => {
+    try {
+      // ipapi.co est gratuit, pas de clé requise, CORS ok
+      const res = await fetch("https://ipapi.co/json/");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.country_name) {
+          setCountry(data.country_name);
+        }
+      }
+    } catch (_) {
+      // Silencieux — le fallback "Congo (Brazzaville)" reste en place
+    } finally {
+      setGeoLoading(false);
+    }
+  });
 
   // ── Dérivés ──────────────────────────────────────────────────
   const showMomo = createMemo(() => isCongo(country()) || isCongo(relayCity()));
@@ -239,8 +257,22 @@ export default function Checkout() {
                         </div>
                       </div>
                       <div class="auth-field">
-                        <label class={lbl}>PAYS</label>
-                        <input class={inp} type="text" value={country()} onInput={e => setCountry(e.currentTarget.value)} required />
+                        <label class={lbl}>
+                          PAYS
+                          <Show when={geoLoading()}>
+                            <span style="font-family:var(--font-mono);font-size:8px;letter-spacing:0.1em;color:var(--ink-4);margin-left:8px;font-weight:normal">
+                              détection...
+                            </span>
+                          </Show>
+                        </label>
+                        <input
+                          class={inp}
+                          type="text"
+                          value={country()}
+                          onInput={e => setCountry(e.currentTarget.value)}
+                          placeholder="Votre pays"
+                          required
+                        />
                       </div>
                     </div>
                   </Show>
