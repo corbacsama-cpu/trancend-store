@@ -10,5 +10,33 @@
     "login": "CONNEXION",
     "account": "MON COMPTE",
     "logout": "DÉCONNEXION"
+  },
+  "index": {
+    "title": "Transcend Store - Official Store",
+    "description": "Official store of Transcend. Discover our latest collections and exclusive drops.",
+    "subtitle": "Premium streetwear designed with passion.",
+    "explore": "EXPLORE COLLECTION",
+    "explore_button": "EXPLORE COLLECTION",
+    "mission": "OUR MISSION",
+    "we_are_transcend": "WE ARE TRANSCEND",
+    "our_story": "OUR STORY",
+    "discover": "DISCOVER",
+    "discover_subtitle": "Discover the latest trends in streetwear",
+    "discover_text": "We offer a wide range of clothing for men and women, including hoodies, t-shirts, pants, and accessories. All our products are made with high-quality materials and designed with passion.",
+    "view_shop": "VIEW SHOP",
+    "featured_items": "FEATURED ITEMS",
+    "shop_all": "SHOP ALL",
+    "shop_all_button": "SHOP ALL",
+    "follow_us": "FOLLOW US",
+    "footer_description": "Transcend is a streetwear brand based in Congo (Brazzaville), founded in 2025 by Corbac Sama. The brand is inspired by the culture and lifestyle of the Congolese youth, and aims to provide high-quality streetwear clothing for men and women.",
+    "footer_contact": "CONTACT",
+    "footer_quick_links": "QUICK LINKS",
+    "footer_socials": "SOCIALS",
+    "footer_newsletter": "NEWSLETTER",
+    "footer_subscribe": "SUBSCRIBE",
+    "footer_copyright": "© 2025 Transcend Store. All rights reserved.",
+    "footer_newsletter_text": "Get the latest updates on new arrivals and exclusive drops.",
+    "footer_newsletter_placeholder": "Enter your email",
+    "footer_newsletter_button": "Subscribe"
   }
 }

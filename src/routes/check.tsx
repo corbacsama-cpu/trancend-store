@@ -10,7 +10,18 @@ type DeliveryMode = "shipping" | "relay";
 type PaymentMethod = "stripe" | "momo";
 
 // ── Constantes ─────────────────────────────────────────────────
-const SHIPPING_FEE = 12;
+const SHIPPING_FEE_FRANCE = 3;
+const SHIPPING_FEE_INTERNATIONAL = 12;
+
+function isFrance(country: string) {
+  const c = country.toLowerCase().trim();
+  return c === "france" || c === "fr" || c.includes("france");
+}
+
+function getShippingFee(country: string): number {
+  if (isFrance(country)) return SHIPPING_FEE_FRANCE;
+  return SHIPPING_FEE_INTERNATIONAL;
+}
 
 function isCongo(country: string) {
   const c = country.toLowerCase().trim();
@@ -23,7 +34,7 @@ export default function Checkout() {
   // Adresse
   const [address, setAddress] = createSignal("");
   const [city, setCity] = createSignal("");
-  const [country, setCountry] = createSignal("France"); // fallback
+  const [country, setCountry] = createSignal("Congo (Brazzaville)"); // fallback
   const [zip, setZip] = createSignal("");
   const [email, setEmail] = createSignal(currentUser()?.email || "");
   const [name, setName] = createSignal(currentUser()?.name || "");
@@ -62,7 +73,9 @@ export default function Checkout() {
 
   // ── Dérivés ──────────────────────────────────────────────────
   const showMomo = createMemo(() => isCongo(country()) || isCongo(relayCity()));
-  const shippingFee = createMemo(() => delivery() === "shipping" ? SHIPPING_FEE : 0);
+  const shippingFee = createMemo(() =>
+    delivery() === "shipping" ? getShippingFee(country()) : 0
+  );
   const total = createMemo(() => cartTotal() + shippingFee());
 
   // Auto MoMo si Congo
@@ -223,9 +236,12 @@ export default function Checkout() {
                       <input type="radio" name="delivery" value="shipping" checked={delivery() === "shipping"} onChange={() => setDelivery("shipping")} />
                       <div class="checkout-option-content">
                         <div class="checkout-option-title">Expédition à domicile</div>
-                        <div class="checkout-option-desc">Livraison partout dans le monde · +{SHIPPING_FEE} €</div>
+                        <div class="checkout-option-desc">
+                          Livraison partout dans le monde · +{getShippingFee(country())} €
+                          {isFrance(country()) ? " (France)" : " (International)"}
+                        </div>
                       </div>
-                      <span class="checkout-option-badge">+{SHIPPING_FEE} €</span>
+                      <span class="checkout-option-badge">+{getShippingFee(country())} €</span>
                     </label>
 
                     {/* Point relais */}
