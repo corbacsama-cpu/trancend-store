@@ -10,8 +10,8 @@ type DeliveryMode = "shipping" | "relay";
 type PaymentMethod = "stripe" | "momo";
 
 // ── Constantes ─────────────────────────────────────────────────
-const SHIPPING_FEE_FRANCE = 3;
-const SHIPPING_FEE_INTERNATIONAL = 12;
+const SHIPPING_FEE_FRANCE = 6;
+const SHIPPING_FEE_INTERNATIONAL = 12.99;
 
 function isFrance(country: string) {
   const c = country.toLowerCase().trim();

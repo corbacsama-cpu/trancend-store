@@ -22,18 +22,19 @@ import {
 import { usePbData } from "~/lib/use-pb-resource";
 import { addToCart } from "~/lib/cart";
 
+
 // Safe image helper
 function getProductImages(p: Product): string[] {
   try {
     const urls = getAllImageUrls(p);
     if (urls && urls.length > 0) return urls;
-  } catch (_) {}
+  } catch (_) { }
   const single = getImageUrl(p);
   return single ? [single] : [];
 }
 
 const FALLBACK_SLIDES: HeroSlide[] = [
-  { id: "1", title: "Collection 2025", subtitle: "COTTON // HAND-DYED // LIMITED", cta_label: "DÉCOUVRIR", cta_url: "/shop", collectionId: "", images: [] },
+  { id: "1", title: "Collection 2025", subtitle: "COTTON // HAND-DYED // LIMITED", cta_label: "DÉCOUVRIR", cta_url: "/shop", collectionId: "", image: "", order: 1, active: true },
 ];
 
 const MARQUEE_ITEMS = [
@@ -97,7 +98,7 @@ function MobileHero(props: { products: Product[]; loading: boolean }) {
           (r * 0.299 + g * 0.587 + b * 0.114) > 128 ? "#111110" : "#f0ede8"
         );
         document.documentElement.classList.add("mobile-hero-active");
-      } catch (_) {}
+      } catch (_) { }
     };
   }
 
@@ -188,7 +189,7 @@ function LabHero(props: { slides: HeroSlide[] }) {
   onMount(() => { timer = setInterval(next, 5000); });
   onCleanup(() => clearInterval(timer));
   const restart = () => { clearInterval(timer); timer = setInterval(next, 5000); };
-
+  const [t] = useTranslation();
   return (
     <section class="lab-hero">
       {/* Left vertical label */}
@@ -322,8 +323,8 @@ function LabHero(props: { slides: HeroSlide[] }) {
 }
 
 // ── LAB GRID SECTION ──────────────────────────────────────────
-// Replace with your actual YouTube video ID
-const YOUTUBE_VIDEO_ID = "g-06sDLT8is"; // ← change this to your video ID
+// Replace with your actual Google Drive video File ID
+const GOOGLE_DRIVE_VIDEO_ID = "1tsug4n3hdsBg9x_KddA8WoX2pMC8AAux"; // ← change this to your Google Drive video file ID
 
 function LabGrid(props: { products: Product[]; loading: boolean }) {
   const list = () => props.products.slice(0, 5);
@@ -373,7 +374,7 @@ function LabGrid(props: { products: Product[]; loading: boolean }) {
                     <span class="lab-collection-num">{String(i() + 1).padStart(2, "0")}</span>
                     <span class="lab-collection-dash">—</span>
                     <span class="lab-collection-name">
-                      {p.name?.toUpperCase() || `TRÄNCËNÐ ${["I","II","III","IV","V"][i()]}`}
+                      {p.name?.toUpperCase() || `TRÄNCËNÐ ${["I", "II", "III", "IV", "V"][i()]}`}
                     </span>
                     {activeIdx() === i()
                       ? <span class="lab-collection-arrow">→</span>
@@ -467,12 +468,12 @@ function LabGrid(props: { products: Product[]; loading: boolean }) {
           </Show>
         </div>
 
-        {/* ── CENTER-RIGHT: YouTube Process video ── */}
+        {/* ── CENTER-RIGHT: Google Drive Process video ── */}
         <div class="lab-grid-process">
           <div class="lab-process-video-wrap">
             <iframe
               class="lab-process-iframe"
-              src={`https://www.youtube.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=0&mute=1&controls=1&rel=0&modestbranding=1`}
+              src={`https://drive.google.com/file/d/${GOOGLE_DRIVE_VIDEO_ID}/preview`}
               title="TRÄNCËNÐ — PROCESS"
               frameborder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -497,12 +498,12 @@ function LabGrid(props: { products: Product[]; loading: boolean }) {
           <div class="lab-detail-thumbs">
             <Show
               when={!props.loading}
-              fallback={<For each={[1,2,3]}>{() => <div class="lab-detail-thumb skeleton" />}</For>}
+              fallback={<For each={[1, 2, 3]}>{() => <div class="lab-detail-thumb skeleton" />}</For>}
             >
               <Show
                 when={selectedImages().length > 0}
                 fallback={
-                  <For each={[1,2,3]}>
+                  <For each={[1, 2, 3]}>
                     {() => <div class="lab-detail-thumb"><div class="lab-detail-thumb-inner" /></div>}
                   </For>
                 }
@@ -547,9 +548,9 @@ export default function Home() {
   const { data: slides, loading: slidesLoading } = usePbData(getHeroSlides, MOCK_HERO_SLIDES ?? FALLBACK_SLIDES);
   const { data: featured, loading: featuredLoading } = usePbData(
     getFeaturedProducts,
-    ( MOCK_PRODUCTS ?? [] ).filter((p) => p.featured),
+    (MOCK_PRODUCTS ?? []).filter((p) => p.featured),
   );
-  
+  const [t] = useTranslation();
 
   return (
     <>
@@ -564,8 +565,8 @@ export default function Home() {
       <div class="mobile-only">
         <MobileHero products={featured()} loading={featuredLoading()} />
       </div>
-  {/* Featured products section */}
-  <section class="lab-products-section">
+      {/* Featured products section */}
+      <section class="lab-products-section">
         <div class="container">
           <div class="lab-section-header">
             <div class="lab-section-label">NOUVEAUTÉS</div>
@@ -575,7 +576,7 @@ export default function Home() {
             when={!featuredLoading()}
             fallback={
               <div class="lab-products-grid">
-                <For each={[1,2,3,4,5,6]}>{() => <div class="skeleton" style="aspect-ratio:3/4;width:100%" />}</For>
+                <For each={[1, 2, 3, 4, 5, 6]}>{() => <div class="skeleton" style="aspect-ratio:3/4;width:100%" />}</For>
               </div>
             }
           >
@@ -613,7 +614,7 @@ export default function Home() {
         </div>
       </div>
 
-    
+
 
       {/* Brand statement */}
       <section class="lab-brand-section">
@@ -627,7 +628,7 @@ export default function Home() {
                 Chaque pièce représente l'ambition, la créativité et le dépassement.
                 Nous créons des vêtements pour ceux qui veulent aller au-delà.
               </p>
-              <A href="/about" class="lab-brand-cta">HISTOIRE & PHILOSOPHIE →</A>
+              <A href="/about" class="lab-brand-cta"> {t("index.our_story")}→</A>
             </div>
             <div class="lab-brand-right">
               <div class="lab-brand-stat-grid">
