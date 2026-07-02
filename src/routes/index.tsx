@@ -543,6 +543,93 @@ function LabGrid(props: { products: Product[]; loading: boolean }) {
   );
 }
 
+// ── MOBILE COLLECTION ─────────────────────────────────────────
+// Accordéon : liste des produits avec image + notes + CTA
+function MobileCollection(props: { products: Product[]; loading: boolean }) {
+  const [openIdx, setOpenIdx] = createSignal<number | null>(0);
+  const list = () => props.products.slice(0, 5);
+
+  return (
+    <section class="mobile-collection">
+      <div class="mobile-collection-header">
+        <span class="mobile-collection-label">COLLECTION</span>
+        <A href="/shop" class="mobile-collection-all">VOIR TOUT →</A>
+      </div>
+
+      <Show
+        when={!props.loading}
+        fallback={
+          <For each={[1,2,3]}>
+            {() => <div class="skeleton" style="height:64px;margin-bottom:1px" />}
+          </For>
+        }
+      >
+        <For each={list()}>{(p, i) => {
+          const imgs = () => getProductImages(p);
+          const isOpen = () => openIdx() === i();
+
+          return (
+            <div class={`mobile-col-item ${isOpen() ? "open" : ""}`}>
+              {/* Ligne titre */}
+              <button
+                class="mobile-col-row"
+                onClick={() => setOpenIdx(isOpen() ? null : i())}
+              >
+                <span class="mobile-col-num">{String(i() + 1).padStart(2, "0")}</span>
+                <span class="mobile-col-dash">—</span>
+                <span class="mobile-col-name">{p.name?.toUpperCase()}</span>
+                <span class="mobile-col-price">{p.price?.toLocaleString("fr-FR")} €</span>
+                <span class={`mobile-col-toggle ${isOpen() ? "open" : ""}`}>+</span>
+              </button>
+
+              {/* Contenu déplié */}
+              <Show when={isOpen()}>
+                <div class="mobile-col-content">
+                  {/* Image */}
+                  <Show when={imgs().length > 0}>
+                    <A href={`/products/${p.id}`} class="mobile-col-img-wrap">
+                      <img
+                        src={imgs()[0]}
+                        alt={p.name}
+                        class="mobile-col-img"
+                        loading="lazy"
+                      />
+                    </A>
+                  </Show>
+
+                  {/* Notes */}
+                  <div class="mobile-col-notes">
+                    <div class="mobile-col-note-row">
+                      <span class="mobile-col-note-key">CATÉGORIE</span>
+                      <span class="mobile-col-note-val">{p.category?.toUpperCase() || "COLLECTION"}</span>
+                    </div>
+                    <div class="mobile-col-note-row">
+                      <span class="mobile-col-note-key">FABRIC</span>
+                      <span class="mobile-col-note-val">NATURAL / RECLAIMED</span>
+                    </div>
+                    <div class="mobile-col-note-row">
+                      <span class="mobile-col-note-key">STOCK</span>
+                      <span class="mobile-col-note-val" style={p.in_stock ? "color:var(--ink)" : "color:#b03020"}>
+                        {p.in_stock ? "EN STOCK" : "ÉPUISÉ"}
+                      </span>
+                    </div>
+                    <Show when={p.description}>
+                      <p class="mobile-col-desc">{p.description}</p>
+                    </Show>
+                    <A href={`/products/${p.id}`} class="mobile-col-cta">
+                      VOIR LE PRODUIT →
+                    </A>
+                  </div>
+                </div>
+              </Show>
+            </div>
+          );
+        }}</For>
+      </Show>
+    </section>
+  );
+}
+
 // ── HOME PAGE ─────────────────────────────────────────────────
 export default function Home() {
   const { data: slides, loading: slidesLoading } = usePbData(getHeroSlides, MOCK_HERO_SLIDES ?? FALLBACK_SLIDES);
@@ -564,6 +651,34 @@ export default function Home() {
       {/* Hero mobile — image plein écran avec produit featured */}
       <div class="mobile-only">
         <MobileHero products={featured()} loading={featuredLoading()} />
+      </div>
+
+      {/* Collection mobile — accordéon sous le hero */}
+      <div class="mobile-only">
+        <MobileCollection products={featured()} loading={featuredLoading()} />
+      </div>
+
+      {/* Vidéo process — mobile */}
+      <div class="mobile-only">
+        <div class="mobile-process-video">
+          <div class="mobile-process-video-header">
+            <span class="mobile-collection-label">PROCESS</span>
+            <A href="/process" class="mobile-collection-all">EN SAVOIR PLUS →</A>
+          </div>
+          <div class="mobile-process-video-wrap">
+            <iframe
+              class="mobile-process-iframe"
+              src={`https://drive.google.com/file/d/${GOOGLE_DRIVE_VIDEO_ID}/preview`}
+              title="TRÄNCËNÐ — PROCESS"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            />
+            <div class="mobile-process-video-label">
+              <span class="lab-process-video-tag">▶ PROCESS</span>
+            </div>
+          </div>
+        </div>
       </div>
       {/* Featured products section */}
       <section class="lab-products-section">
